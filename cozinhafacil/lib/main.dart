@@ -51,9 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Cozinha Fácil'),
-      ),
+    
       body: _selectedIndex == 0
           ? CardGrid()
           : _pages[_selectedIndex],
