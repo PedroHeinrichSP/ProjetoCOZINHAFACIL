@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'perfil.dart';
+
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.all(16.0), // Espaço ao redor do texto
+                child: Text(
+                  'BEM-VINDO!',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
               const TextField(
                 decoration: InputDecoration(
                   labelText: 'Nome de Usuário',
@@ -38,9 +53,9 @@ class LoginScreen extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).pop();
                               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PerfilScreen()),
-                );
+                                context,
+                                MaterialPageRoute(builder: (context) => PerfilScreen()),
+                              );
                             },
                             child: Text('OK'),
                           ),
@@ -52,12 +67,18 @@ class LoginScreen extends StatelessWidget {
                 child: Text('Login'),
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Navegar para a tela de cadastro quando pressionar o botão
+              InkWell(
+                onTap: () {
+                  // Navegar para a tela de cadastro quando pressionar o texto
                   Navigator.pushNamed(context, '/cadastro');
                 },
-                child: Text('Ir para o Cadastro'),
+                child: Text(
+                  'Novo por aqui? Cadastre-se',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
             ],
           ),
@@ -66,4 +87,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-

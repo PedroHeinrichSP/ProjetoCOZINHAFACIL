@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'receita.dart';
 
 enum CardType {
+  Todos,
   Italiano,
   Frances,
   Japonesa,
@@ -52,11 +53,10 @@ class _CardGridState extends State<CardGrid> {
       description: 'Descrição do Card 5',
       title: 'Card 5',
     ),
-    // Adicione mais cards aqui com tipos diferentes
   ];
 
   List<CardData> filteredCards = [];
-  CardType selectedType = CardType.Italiano; // Tipo padrão selecionado
+  CardType selectedType = CardType.Todos; // Tipo padrão selecionado
 
   @override
   void initState() {
@@ -65,8 +65,15 @@ class _CardGridState extends State<CardGrid> {
   }
 
   void filterCards() {
-    filteredCards.clear();
-    filteredCards.addAll(allCards.where((card) => card.type == selectedType));
+    if (selectedType == CardType.Todos) {
+      // Se o filtro Todos estiver selecionado, mostre todos os cards
+      filteredCards.clear();
+      filteredCards.addAll(allCards);
+    } else {
+      // Caso contrário, filtre os cards com base no tipo selecionado
+      filteredCards.clear();
+      filteredCards.addAll(allCards.where((card) => card.type == selectedType));
+    }
     setState(() {});
   }
 
@@ -74,62 +81,74 @@ class _CardGridState extends State<CardGrid> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              DropdownButton<CardType>(
-                value: selectedType,
-                items: CardType.values
-                    .map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type.toString().split('.')[1]), // Remove o prefixo 'CardType.'
-                        ))
-                    .toList(),
-                onChanged: (type) {
-                  setState(() {
-                    selectedType = type!;
-                  });
-                  filterCards();
-                },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Cozinha Fácil'),
+        actions: <Widget>[
+          PopupMenuButton<CardType>(
+            icon: Icon(Icons.filter_alt), // Ícone de filtro
+            onSelected: (type) {
+              setState(() {
+                selectedType = type;
+              });
+              filterCards();
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<CardType>>[
+              PopupMenuItem<CardType>(
+                value: CardType.Todos,
+                child: Text('Todos'), // Opção de filtro "Todos"
+              ),
+              PopupMenuItem<CardType>(
+                value: CardType.Italiano,
+                child: Text('Italiano'), // Opção de filtro "Italiano"
+              ),
+              PopupMenuItem<CardType>(
+                value: CardType.Frances,
+                child: Text('Frances'), // Opção de filtro "Frances"
+              ),
+              PopupMenuItem<CardType>(
+                value: CardType.Japonesa,
+                child: Text('Japonesa'), // Opção de filtro "Japonesa"
               ),
             ],
           ),
-        ),
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              int crossAxisCount;
-              double cardWidth;
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                int crossAxisCount;
+                double cardWidth;
 
-              if (screenWidth >= 1200) {
-                crossAxisCount = 3;
-                cardWidth = screenWidth / 3 - 16.0;
-              } else {
-                crossAxisCount = 2;
-                cardWidth = screenWidth / 2 - 16.0;
-              }
+                if (screenWidth >= 1200) {
+                  crossAxisCount = 3;
+                  cardWidth = screenWidth / 3 - 16.0;
+                } else {
+                  crossAxisCount = 2;
+                  cardWidth = screenWidth / 2 - 16.0;
+                }
 
-              return GridView.count(
-                crossAxisCount: crossAxisCount,
-                padding: EdgeInsets.all(8.0),
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                children: filteredCards.map((card) {
-                  return CardWidget(
-                    imageUrl: card.imageUrl,
-                    description: card.description,
-                    title: card.title,
-                    cardWidth: cardWidth,
-                  );
-                }).toList(),
-              );
-            },
+                return GridView.count(
+                  crossAxisCount: crossAxisCount,
+                  padding: EdgeInsets.all(8.0),
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                  children: filteredCards.map((card) {
+                    return CardWidget(
+                      imageUrl: card.imageUrl,
+                      description: card.description,
+                      title: card.title,
+                      cardWidth: cardWidth,
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -151,8 +170,9 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => DefaultCard(this.imageUrl, this.description, this.title)));
+                Navigator.push(context, MaterialPageRoute(
+          builder: (context) => DefaultCard(this.imageUrl, this.description, this.title)
+        ));
       },
       child: Card(
         elevation: 4.0,
@@ -211,3 +231,4 @@ class CardData {
     required this.title,
   });
 }
+
