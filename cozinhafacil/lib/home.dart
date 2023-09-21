@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'receita.dart';
-
 enum CardType {
-  Todos,
+  Todas,
   Italiano,
   Frances,
   Japonesa,
+  Favoritas,
 }
 
 class CardGrid extends StatefulWidget {
@@ -19,44 +18,45 @@ class _CardGridState extends State<CardGrid> {
     CardData(
       type: CardType.Italiano,
       imageUrl: 'https://storage.googleapis.com/cms-storage-bucket/70760bf1e88b184bb1bc.png',
-      description: 'Descrição do Card 1',
-      title: 'Card 1',
+      description: 'Spaghetti à Bolonhesa',
+      title: 'Spaghetti à Bolonhesa',
     ),
     CardData(
       type: CardType.Italiano,
       imageUrl: 'https://storage.googleapis.com/cms-storage-bucket/70760bf1e88b184bb1bc.png',
-      description: 'Descrição do Card 2',
-      title: 'Card 2',
+      description: 'Pizza Margherita',
+      title: 'Pizza Margherita',
     ), 
     CardData(
       type: CardType.Italiano,
       imageUrl: 'https://storage.googleapis.com/cms-storage-bucket/70760bf1e88b184bb1bc.png',
-      description: 'Descrição do Card 7',
-      title: 'Card 7',
+      description: 'Lasanha à Bolonhesa',
+      title: 'Lasanha à Bolonhesa',
     ),
     
     CardData(
       type: CardType.Frances,
       imageUrl: 'https://storage.googleapis.com/cms-storage-bucket/70760bf1e88b184bb1bc.png',
-      description: 'Descrição do Card 3',
-      title: 'Card 3',
+      description: 'Croissant de Chocolate',
+      title: 'Croissant de Chocolate',
     ),
     CardData(
       type: CardType.Frances,
       imageUrl: 'https://storage.googleapis.com/cms-storage-bucket/70760bf1e88b184bb1bc.png',
-      description: 'Descrição do Card 4',
-      title: 'Card 4',
+      description: 'Sopa de Cebola',
+      title: 'Sopa de Cebola',
     ),
     CardData(
       type: CardType.Japonesa,
       imageUrl: 'https://storage.googleapis.com/cms-storage-bucket/70760bf1e88b184bb1bc.png',
-      description: 'Descrição do Card 5',
-      title: 'Card 5',
+      description: 'Sushi de Salmão',
+      title: 'Sushi de Salmão',
     ),
+    // Adicione mais cards aqui com tipos diferentes
   ];
 
   List<CardData> filteredCards = [];
-  CardType selectedType = CardType.Todos; // Tipo padrão selecionado
+  CardType selectedType = CardType.Todas;
 
   @override
   void initState() {
@@ -65,13 +65,12 @@ class _CardGridState extends State<CardGrid> {
   }
 
   void filterCards() {
-    if (selectedType == CardType.Todos) {
-      // Se o filtro Todos estiver selecionado, mostre todos os cards
-      filteredCards.clear();
+    filteredCards.clear();
+    if (selectedType == CardType.Todas) {
       filteredCards.addAll(allCards);
+    } else if (selectedType == CardType.Favoritas) {
+      filteredCards.addAll(allCards.where((card) => card.isFavorite));
     } else {
-      // Caso contrário, filtre os cards com base no tipo selecionado
-      filteredCards.clear();
       filteredCards.addAll(allCards.where((card) => card.type == selectedType));
     }
     setState(() {});
@@ -83,39 +82,51 @@ class _CardGridState extends State<CardGrid> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cozinha Fácil'),
-        actions: <Widget>[
+        title: Text('Receitas'),
+        actions: [
           PopupMenuButton<CardType>(
-            icon: Icon(Icons.filter_alt), // Ícone de filtro
+            itemBuilder: (context) {
+              return CardType.values.map((type) {
+                return PopupMenuItem<CardType>(
+                  value: type,
+                  child: Text(type.toString().split('.')[1]),
+                );
+              }).toList();
+            },
             onSelected: (type) {
               setState(() {
                 selectedType = type;
               });
               filterCards();
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<CardType>>[
-              PopupMenuItem<CardType>(
-                value: CardType.Todos,
-                child: Text('Todos'), // Opção de filtro "Todos"
-              ),
-              PopupMenuItem<CardType>(
-                value: CardType.Italiano,
-                child: Text('Italiano'), // Opção de filtro "Italiano"
-              ),
-              PopupMenuItem<CardType>(
-                value: CardType.Frances,
-                child: Text('Frances'), // Opção de filtro "Frances"
-              ),
-              PopupMenuItem<CardType>(
-                value: CardType.Japonesa,
-                child: Text('Japonesa'), // Opção de filtro "Japonesa"
-              ),
-            ],
           ),
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Filtros:',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: CardType.values.map((type) {
+              return FilterChip(
+                label: Text(type.toString().split('.')[1]),
+                selected: selectedType == type,
+                onSelected: (selected) {
+                  setState(() {
+                    selectedType = type;
+                  });
+                  filterCards();
+                },
+              );
+            }).toList(),
+          ),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -132,15 +143,17 @@ class _CardGridState extends State<CardGrid> {
 
                 return GridView.count(
                   crossAxisCount: crossAxisCount,
-                  padding: EdgeInsets.all(8.0),
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
+                  padding: EdgeInsets.all(16.0),
+                  mainAxisSpacing: 16.0,
+                  crossAxisSpacing: 16.0,
                   children: filteredCards.map((card) {
                     return CardWidget(
-                      imageUrl: card.imageUrl,
-                      description: card.description,
-                      title: card.title,
+                      cardData: card,
                       cardWidth: cardWidth,
+                      onFavoriteChanged: () {
+                        // Atualizar a lista de favoritos
+                        filterCards();
+                      },
                     );
                   }).toList(),
                 );
@@ -153,26 +166,34 @@ class _CardGridState extends State<CardGrid> {
   }
 }
 
-class CardWidget extends StatelessWidget {
-  final String imageUrl;
-  final String description;
-  final String title;
+class CardWidget extends StatefulWidget {
+  final CardData cardData;
   final double cardWidth;
+  final VoidCallback? onFavoriteChanged;
 
   CardWidget({
-    required this.imageUrl,
-    required this.description,
-    required this.title,
+    required this.cardData,
     required this.cardWidth,
+    this.onFavoriteChanged,
   });
 
+  @override
+  _CardWidgetState createState() => _CardWidgetState();
+}
+
+class _CardWidgetState extends State<CardWidget> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-          builder: (context) => DefaultCard(this.imageUrl, this.description, this.title)
-        ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecipeDetailScreen(
+              cardData: widget.cardData,
+            ),
+          ),
+        );
       },
       child: Card(
         elevation: 4.0,
@@ -182,16 +203,20 @@ class CardWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: cardWidth,
+            Hero(
+              tag: widget.cardData.title,
+              child: Image.network(
+                widget.cardData.imageUrl,
+                fit: BoxFit.cover,
+                width: widget.cardWidth,
+                height: 150.0,
+              ),
             ),
             SizedBox(height: 8.0),
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                title,
+                widget.cardData.title,
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -203,13 +228,26 @@ class CardWidget extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                description,
+                widget.cardData.description,
                 style: TextStyle(
                   fontSize: 14.0,
                   color: Colors.black87,
                 ),
                 textAlign: TextAlign.center,
               ),
+            ),
+            IconButton(
+              icon: widget.cardData.isFavorite
+                  ? Icon(Icons.favorite, color: Colors.red)
+                  : Icon(Icons.favorite_border),
+              onPressed: () {
+                setState(() {
+                  widget.cardData.isFavorite = !widget.cardData.isFavorite;
+                });
+                if (widget.onFavoriteChanged != null) {
+                  widget.onFavoriteChanged!();
+                }
+              },
             ),
           ],
         ),
@@ -223,12 +261,54 @@ class CardData {
   final String imageUrl;
   final String description;
   final String title;
+  bool isFavorite;
 
   CardData({
     required this.type,
     required this.imageUrl,
     required this.description,
     required this.title,
+    this.isFavorite = false,
   });
 }
 
+class RecipeDetailScreen extends StatelessWidget {
+  final CardData cardData;
+
+  RecipeDetailScreen({
+    required this.cardData,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(cardData.title)),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Hero(
+              tag: cardData.title,
+              child: Image.network(
+                cardData.imageUrl,
+                fit: BoxFit.cover,
+                height: 200.0,
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Descrição:',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+            Text(cardData.description),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void main() => runApp(MaterialApp(
+      home: CardGrid(),
+    ));
