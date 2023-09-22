@@ -235,21 +235,19 @@ class _CardWidgetState extends State<CardWidget> {
       },
       child: Card(
         elevation: 4.0,
-        margin: EdgeInsets.all(8.0),
+        margin: EdgeInsets.only(top:8, left: 8, right: 8, bottom: 16),
         color: Colors.white,
         child: ListView( // Use ListView para tornar o conteúdo rolável
           shrinkWrap: true,
           children: <Widget>[
-            Hero(
-              tag: widget.cardData.title,
-              child: Image.network(
-                widget.cardData.imageUrl,
-                fit: BoxFit.cover,
-                width: widget.cardWidth,
-                height: 150.0,
+            Expanded(
+              child: Hero(
+                tag: widget.cardData.title,
+                child: Image.network(
+                  widget.cardData.imageUrl,
+                ),
               ),
             ),
-            SizedBox(height: 8.0),
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
@@ -360,10 +358,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             Hero(
               tag: widget.cardData.title,
               child: Image.network(
+            apiConectada
                 widget.cardData.imageUrl,
                 fit: BoxFit.cover,
                 height: 200.0,
               ),
+                cardData.imageUrl,
+                fit: BoxFit.fill,
+                ),
             ),
             SizedBox(height: 16.0),
             Text(
