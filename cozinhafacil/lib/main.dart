@@ -1,4 +1,5 @@
 // Bibliotecas
+import 'package:cozinhafacil/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'utils/pallete.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/cadastro': (context) => CadastroScreen(),
         '/login': (context) => LoginScreen(),
-        '/home': (context) => CardGrid(),
+        '/home': (context) => HomePage(),
       },
     );
   }
@@ -37,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = [
     Conversor(),
-    CardGrid(),
+    HomePage(),
     LoginScreen(),
     // Adicione suas outras páginas aqui
   ];
@@ -53,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _selectedIndex == 1 ? CardGrid() : _pages[_selectedIndex],
+      body: _selectedIndex == 1 ? HomePage() : _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

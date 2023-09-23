@@ -149,19 +149,6 @@ class _CardGridState extends State<CardGrid> {
               );
             },
           ),
-
-
-            // IconButton(
-            //   icon: Icon(Icons.settings),
-            //   color: AppColors.buttonPrimaryColor,
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => ConfiguracoesScreen()),
-            //     );
-            //   },
-            // ),
-
           //icone do filtro aqui
          PopupMenuButton<CardType>(
         icon: const Icon(
