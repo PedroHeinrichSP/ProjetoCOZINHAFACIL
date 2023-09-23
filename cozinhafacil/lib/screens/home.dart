@@ -250,7 +250,7 @@ class _CardWidgetState extends State<CardWidget> {
       child: Card(
         elevation: 4.0,
         margin: EdgeInsets.all(8.0),
-        color: Colors.white,
+        color: AppColors.cardColor,
         child: ListView( // Use ListView para tornar o conteúdo rolável
           shrinkWrap: true,
           children: <Widget>[
@@ -271,7 +271,7 @@ class _CardWidgetState extends State<CardWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppColors.textColor,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -283,7 +283,7 @@ class _CardWidgetState extends State<CardWidget> {
                 widget.cardData.description,
                 style: TextStyle(
                   fontSize: 14.0,
-                  color: Colors.black87,
+                  color: AppColors.textColor,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 3,
@@ -387,14 +387,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.textColor,
               ),
             ),
             Text(
               widget.cardData.description,
               style: TextStyle(
                 fontSize: 16.0,
-                color: Colors.black87,
+                color: AppColors.textColor,
               ),
             ),
             SizedBox(height: 16.0),
@@ -403,7 +403,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.textColor,
               ),
             ),
             loading
@@ -413,14 +413,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         instructions!,
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black87,
+                          color: AppColors.textColor,
                         ),
                       )
                     : Text(
                         'Instruções não encontradas.',
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black87,
+                          color: AppColors.textColor,
                         ),
                       )),
             SizedBox(height: 16.0),
@@ -436,7 +436,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               vegetarian ?? 'Desconhecido',
               style: TextStyle(
                 fontSize: 16.0,
-                color: Colors.black87,
+                color: AppColors.textColor,
               ),
             ),
             SizedBox(height: 16.0),
@@ -459,7 +459,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                             dishType,
                             style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.black87,
+                              color: AppColors.textColor,
                             ),
                           ),
                         ],
@@ -470,7 +470,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     'Desconhecido',
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Colors.black87,
+                      color: AppColors.textColor,
                     ),
                   ),
             SizedBox(height: 16.0),
@@ -493,7 +493,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                             ingredient,
                             style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.black87,
+                              color: AppColors.textColor,
                             ),
                           ),
                         ],
@@ -504,7 +504,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     'Desconhecido',
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Colors.black87,
+                      color: AppColors.textColor,
                     ),
                   ),
             SizedBox(height: 16.0),
@@ -520,7 +520,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               widget.cardData.type.toString().split('.')[1],
               style: TextStyle(
                 fontSize: 16.0,
-                color: Colors.black87,
+                color: AppColors.textColor,
               ),
             ),
             SizedBox(height: 16.0),

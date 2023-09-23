@@ -1,13 +1,13 @@
+import 'package:cozinhafacil/utils/pallete.dart';
 import 'package:flutter/material.dart';
 import 'perfil.dart';
 
 class LoginScreen extends StatelessWidget {
+  //TODO every controller and login logic
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -17,67 +17,65 @@ class LoginScreen extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.all(16.0), // Espaço ao redor do texto
                 child: Text(
-                  'BEM-VINDO!',
+                  'Olá\nBem vindo!',
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
+
                   ),
                 ),
               ),
-              const SizedBox(height: 16.0),
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: 'Nome de Usuário',
+              const Padding(
+                padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Nome de Usuário',
+                  ),
                 ),
               ),
-              SizedBox(height: 16.0),
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
+              PasswordTextField(),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right:16, bottom: 32),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Lógica de autenticação aqui
+                    // Por enquanto, apenas exibe uma mensagem de sucesso
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Login bem-sucedido'),
+                          content: Text('Você está logado!'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => PerfilScreen()),
+                                );
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text('Entrar'),
+                  ),
                 ),
-              ),
-              SizedBox(height: 32.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Lógica de autenticação aqui
-                  // Por enquanto, apenas exibe uma mensagem de sucesso
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Login bem-sucedido'),
-                        content: Text('Você está logado!'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => PerfilScreen()),
-                              );
-                            },
-                            child: Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Text('Login'),
-              ),
-              SizedBox(height: 16.0),
               InkWell(
                 onTap: () {
                   // Navegar para a tela de cadastro quando pressionar o texto
                   Navigator.pushNamed(context, '/cadastro');
                 },
                 child: Text(
-                  'Novo por aqui? Cadastre-se',
+                  'Primeira vez por aqui?\nCadastre-se',
                   style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+                    color: AppColors.textColor,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],
@@ -86,4 +84,37 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
+}
+class PasswordTextField extends StatefulWidget{
+  const PasswordTextField({super.key});
+
+  @override
+  _PasswordTextFieldState createState() => _PasswordTextFieldState();
+}
+class _PasswordTextFieldState extends State<PasswordTextField> {
+  TextEditingController _passwordController = TextEditingController();
+  bool _isObscured = true;//Track password is visible or not
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
+        child: TextField(
+          obscureText: _isObscured,
+          decoration: InputDecoration(
+            labelText: 'Senha',
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  _isObscured = !_isObscured; // Toggle the value of _isObscured
+                });
+              },
+              icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
+            ),
+          ),
+          enableSuggestions: false,
+        ),
+    );
+  }
+
 }
