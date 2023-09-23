@@ -17,12 +17,14 @@ class _HomePageState extends State<HomePage> {
       description: 'Description for Recipe 1',
     ),
     RecipeItem(
-      imageUrl: 'https://media-cdn.tripadvisor.com/media/photo-s/19/6a/f1/a4/16-ninesixteenth.jpg',
+      imageUrl:
+          'https://media-cdn.tripadvisor.com/media/photo-s/19/6a/f1/a4/16-ninesixteenth.jpg',
       title: 'Recipe 2',
       description: 'Description for Recipe 2',
     ),
     RecipeItem(
-      imageUrl: 'https://miro.medium.com/v2/resize:fit:1200/1*dx1MHKoqVApb5_KCylBoew.jpeg',
+      imageUrl:
+          'https://miro.medium.com/v2/resize:fit:1200/1*dx1MHKoqVApb5_KCylBoew.jpeg',
       title: 'Recipe 3',
       description: 'Description for Recipe 3',
     ),
@@ -36,9 +38,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[Colors.black, Colors.transparent]),
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -126,4 +137,3 @@ class RecipeItem {
     required this.description,
   });
 }
-
