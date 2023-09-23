@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-class PageTwo extends StatelessWidget {
+class Conversor extends StatelessWidget {
+  const Conversor({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cozinha Fácil'),
+        title: Text('Conversor de Medidas'),
       ),
       body: Center(
-        child: Text('Página 2'),
+        child: Text('TODO conversor'),
       ),
     );
   }

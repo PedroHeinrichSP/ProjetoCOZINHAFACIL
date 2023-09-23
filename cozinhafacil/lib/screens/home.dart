@@ -1,3 +1,4 @@
+import 'package:cozinhafacil/utils/pallete.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -120,10 +121,22 @@ class _CardGridState extends State<CardGrid> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Receitas'),
+        backgroundColor: AppColors.primaryColor,
         actions: <Widget>[
           IconButton(
+              icon: Icon(Icons.search),
+              color: AppColors.buttonPrimaryColor,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchScreen()),
+                  );
+              },
+          ),
+          IconButton(
             icon: Icon(Icons.favorite),
+            color: AppColors.buttonPrimaryColor,
             onPressed: () {
               Navigator.push(
                 context,
@@ -135,6 +148,7 @@ class _CardGridState extends State<CardGrid> {
           ),
           IconButton(
             icon: Icon(Icons.settings),
+            color: AppColors.buttonPrimaryColor,
             onPressed: () {
               Navigator.push(
                 context,
@@ -351,7 +365,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.cardData.title)),
+      appBar:
+        AppBar(title: Text(widget.cardData.title)),
+        backgroundColor: AppColors.primaryColor,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -533,7 +549,7 @@ class FavoritasScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favoritas'),
+        backgroundColor: AppColors.primaryColor,
       ),
       body: ListView.builder(
         itemCount: favoriteRecipes.length,
@@ -556,9 +572,25 @@ class ConfiguracoesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Configurações'),
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Center(
         child: Text('Página de Configurações'),
+      ),
+    );
+  }
+}
+
+class SearchScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pesquisa'),
+        backgroundColor: AppColors.primaryColor,
+      ),
+      body: Center(
+        child: Text('Página de pesquisa TODO'),
       ),
     );
   }
