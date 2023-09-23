@@ -19,6 +19,7 @@ class LoginScreen extends StatelessWidget {
                 child: Text(
                   'Olá\nBem vindo!',
                   style: TextStyle(
+                    
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
 
@@ -28,6 +29,8 @@ class LoginScreen extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                 child: TextField(
+                  
+                 
                   decoration: InputDecoration(
                     labelText: 'Nome de Usuário',
                   ),
@@ -62,6 +65,10 @@ class LoginScreen extends StatelessWidget {
                       },
                     );
                   },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, 
+                    backgroundColor: Color.fromARGB(255, 218, 175, 167), 
+                  ),
                   child: Text('Entrar'),
                   ),
                 ),
@@ -70,10 +77,11 @@ class LoginScreen extends StatelessWidget {
                   // Navegar para a tela de cadastro quando pressionar o texto
                   Navigator.pushNamed(context, '/cadastro');
                 },
-                child: Text(
+                child: const Text(
                   'Primeira vez por aqui?\nCadastre-se',
                   style: TextStyle(
-                    color: AppColors.textColor,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline
                   ),
                   textAlign: TextAlign.center,
                 ),

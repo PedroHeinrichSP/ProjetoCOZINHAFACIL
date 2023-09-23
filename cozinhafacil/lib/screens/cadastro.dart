@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cozinhafacil/utils/pallete.dart';
 class CadastroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tela de Cadastro'),
+         backgroundColor: AppColors.primaryColor,
+          iconTheme: IconThemeData(
+          color: AppColors.textColor, // Define a cor do ícone (seta de voltar)
+        ),
+        title: const Text(
+          'Tela de Cadastro',
+          style: TextStyle(
+            color: AppColors.textColor, // Define a cor do texto da AppBar como preto
+          ),
+        ),
       ),
       body: Center(
         child: Padding(
@@ -12,13 +22,13 @@ class CadastroScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextField(
+               TextField(
                 decoration: InputDecoration(
                   labelText: 'Nome de Usuário',
                 ),
               ),
               SizedBox(height: 16.0),
-              TextField(
+               TextField(
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Senha',
@@ -47,6 +57,10 @@ class CadastroScreen extends StatelessWidget {
                     },
                   );
                 },
+                 style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, 
+                    backgroundColor: Color.fromARGB(255, 218, 175, 167), 
+                  ),
                 child: Text('Cadastrar'),
               ),
             ],
