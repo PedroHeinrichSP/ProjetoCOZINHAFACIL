@@ -6,9 +6,6 @@ class Conversor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Conversor de Medidas'),
-      ),
       body: Center(
         child: Text('TODO conversor'),
       ),
