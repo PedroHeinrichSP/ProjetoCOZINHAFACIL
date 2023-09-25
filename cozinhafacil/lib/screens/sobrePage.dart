@@ -10,7 +10,7 @@ class SobrePage extends StatelessWidget {
           color: AppColors.textColor, // Define a cor do ícone (seta de voltar)
         ),
         title: const Text(
-          'Tela de Cadastro',
+          'Sobre',
           style: TextStyle(
             color: AppColors.textColor, // Define a cor do texto da AppBar como preto
           ),
