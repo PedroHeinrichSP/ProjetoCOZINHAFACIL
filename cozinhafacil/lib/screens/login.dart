@@ -17,7 +17,7 @@ class LoginScreen extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.all(16.0), // Espaço ao redor do texto
                 child: Text(
-                  'Olá\nBem vindo!',
+                  'Olá,\nBem vindo!',
                   style: TextStyle(
                     
                     fontSize: 30.0,
@@ -105,6 +105,40 @@ class PasswordTextField extends StatefulWidget{
   _PasswordTextFieldState createState() => _PasswordTextFieldState();
 }
 class _PasswordTextFieldState extends State<PasswordTextField> {
+  TextEditingController _passwordController = TextEditingController();
+  bool _isObscured = true;//Track password is visible or not
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
+        child: TextField(
+          obscureText: _isObscured,
+          decoration: InputDecoration(
+            labelText: 'Senha',
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  _isObscured = !_isObscured; // Toggle the value of _isObscured
+                });
+              },
+              icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
+            ),
+          ),
+          enableSuggestions: false,
+        ),
+    );
+  }
+
+}
+
+class PasswordTextFieldConst extends StatefulWidget{
+  const PasswordTextFieldConst({super.key});
+
+  @override
+  _PasswordTextFieldState createState() => _PasswordTextFieldState();
+}
+class _PasswordTextFieldStateC extends State<PasswordTextFieldConst> {
   TextEditingController _passwordController = TextEditingController();
   bool _isObscured = true;//Track password is visible or not
 
