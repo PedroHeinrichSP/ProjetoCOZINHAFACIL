@@ -58,7 +58,12 @@ class LoginScreen extends StatelessWidget {
                                   MaterialPageRoute(builder: (context) => PerfilScreen()),
                                 );
                               },
-                              child: Text('OK'),
+                              child: Text( 'OK',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 74, 96, 78),
+                                fontWeight: FontWeight.bold, // Adicione esta linha para tornar o texto negrito
+                              ),
+                            )
                             ),
                           ],
                         );

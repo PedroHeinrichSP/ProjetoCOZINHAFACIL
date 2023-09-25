@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
-
+import 'package:cozinhafacil/utils/pallete.dart';
 class SobrePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sobre'),
-      ),
+     appBar: AppBar(
+         backgroundColor: AppColors.primaryColor,
+          iconTheme: IconThemeData(
+          color: AppColors.textColor, // Define a cor do ícone (seta de voltar)
+        ),
+        title: const Text(
+          'Tela de Cadastro',
+          style: TextStyle(
+            color: AppColors.textColor, // Define a cor do texto da AppBar como preto
+          ),
+        ),
+     ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

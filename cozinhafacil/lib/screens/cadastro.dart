@@ -50,7 +50,12 @@ class CadastroScreen extends StatelessWidget {
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },
-                            child: Text('OK'),
+                            child:Text('OK',
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 74, 96, 78),
+                                  fontWeight: FontWeight.bold, // Adicione esta linha para tornar o texto negrito
+                                ),
+                              ),
                           ),
                         ],
                       );
