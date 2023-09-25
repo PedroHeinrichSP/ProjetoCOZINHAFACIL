@@ -15,7 +15,7 @@ class PerfilScreen extends StatelessWidget {
           color: AppColors.textColor,
         ),
         title: const Text(
-          'Tela de Cadastro',
+          'Perfil',
           style: TextStyle(
             color: AppColors.textColor,
           ),
