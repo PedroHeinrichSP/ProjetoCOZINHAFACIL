@@ -1,4 +1,3 @@
-import 'package:cozinhafacil/utils/pallete.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,23 +17,231 @@ class _ConversorState extends State<Conversor> {
   bool mostrarResultado = false;
 
   String selectedIngrediente = 'Arroz';
-  String selectedMedida1 = 'Colher';
-  String selectedMedida2 = 'Colher';
+  String selectedMedida1 = 'Colheres de Chá';
+  String selectedMedida2 = 'Colheres de Chá';
   double quantidade = 0.0;
 
-  List<String> ingredientes = ['Arroz', 'Feijão', 'Açúcar', 'Farinha'];
-  List<String> medidas = ['Colher', 'Copo americano', 'Xícara', 'Gramas', 'Quilos'];
+  Map<String, Map<String, double>> medidasEquivalentes = {
+    'Arroz': {
+      'Colheres de Chá': 4,
+      'Colheres de Sobremesa': 8,
+      'Colheres de Sopa': 12,
+      'Copos Americanos': 150,
+      'Xícaras de Chá': 185,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Amido de Milho': {
+      'Colheres de Chá': 3,
+      'Colheres de Sobremesa': 6,
+      'Colheres de Sopa': 8,
+      'Copos Americanos': 105,
+      'Xícaras de Chá': 128,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Açúcar': {
+      'Colheres de Chá': 4,
+      'Colheres de Sobremesa': 8,
+      'Colheres de Sopa': 12,
+      'Copos Americanos': 148,
+      'Xícaras de Chá': 180,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Aveia': {
+      'Colheres de Chá': 2,
+      'Colheres de Sobremesa': 4,
+      'Colheres de Sopa': 6,
+      'Copos Americanos': 66,
+      'Xícaras de Chá': 80,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Bicarbonato/Fermento': {
+      'Colheres de Chá': 5,
+      'Colheres de Sobremesa': 10,
+      'Colheres de Sopa': 14,
+      'Copos Americanos': 184,
+      'Xícaras de Chá': 224,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Café em Pó': {
+      'Colheres de Chá': 2,
+      'Colheres de Sobremesa': 4,
+      'Colheres de Sopa': 5,
+      'Copos Americanos': 66,
+      'Xícaras de Chá': 80,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Castanhas': {
+      'Colheres de Chá': 3,
+      'Colheres de Sobremesa': 6,
+      'Colheres de Sopa': 9,
+      'Copos Americanos': 115,
+      'Xícaras de Chá': 140,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Chocolate em Pó': {
+      'Colheres de Chá': 2,
+      'Colheres de Sobremesa': 4,
+      'Colheres de Sopa': 6,
+      'Copos Americanos': 74,
+      'Xícaras de Chá': 90,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Coco Ralado Fresco': {
+      'Colheres de Chá': 2,
+      'Colheres de Sobremesa': 4,
+      'Colheres de Sopa': 6,
+      'Copos Americanos': 82,
+      'Xícaras de Chá': 100,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Farinha de Trigo': {
+      'Colheres de Chá': 2.5,
+      'Colheres de Sobremesa': 5,
+      'Colheres de Sopa': 7.5,
+      'Copos Americanos': 98.5,
+      'Xícaras de Chá': 120,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Fubá': {
+      'Colheres de Chá': 2.6,
+      'Colheres de Sobremesa': 5.25,
+      'Colheres de Sopa': 7.9,
+      'Copos Americanos': 104,
+      'Xícaras de Chá': 126,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Manteiga': {
+      'Colheres de Chá': 4.2,
+      'Colheres de Sobremesa': 8.4,
+      'Colheres de Sopa': 12.5,
+      'Copos Americanos': 165,
+      'Xícaras de Chá': 200,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Pasta de Amendoim': {
+      'Colheres de Chá': 5.4,
+      'Colheres de Sobremesa': 10.8,
+      'Colheres de Sopa': 16,
+      'Copos Americanos': 212,
+      'Xícaras de Chá': 258,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Polvilho Doce e Azedo': {
+      'Colheres de Chá': 2.6,
+      'Colheres de Sobremesa': 5.2,
+      'Colheres de Sopa': 8,
+      'Copos Americanos': 105,
+      'Xícaras de Chá': 128,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Sal Comum': {
+      'Colheres de Chá': 6,
+      'Colheres de Sobremesa': 12,
+      'Colheres de Sopa': 18,
+      'Copos Americanos': 236,
+      'Xícaras de Chá': 288,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+    'Queijo Ralado': {
+      'Colheres de Chá': 2,
+      'Colheres de Sobremesa': 4,
+      'Colheres de Sopa': 6,
+      'Copos Americanos': 74,
+      'Xícaras de Chá': 90,
+      'Onças (oz)': 30,
+      'Gramas (g)': 1,
+      'Pounds / Libras (lb)': 450,
+      'Quilogramas (kg)': 1000,
+    },
+  };
+
+  List<String> ingredientes = [
+    'Arroz',
+    'Amido de Milho',
+    'Açúcar',
+    'Aveia',
+    'Bicarbonato/Fermento',
+    'Café em Pó',
+    'Castanhas',
+    'Chocolate em Pó',
+    'Coco Ralado Fresco',
+    'Farinha de Trigo',
+    'Fubá',
+    'Manteiga',
+    'Pasta de Amendoim',
+    'Polvilho Doce e Azedo',
+    'Sal Comum',
+    'Queijo Ralado',
+  ];
+
+  List<String> medidas = [
+    'Colheres de Chá',
+    'Colheres de Sobremesa',
+    'Colheres de Sopa',
+    'Copos Americanos',
+    'Xícaras de Chá',
+    'Onças (oz)',
+    'Gramas (g)',
+    'Pounds / Libras (lb)',
+    'Quilogramas (kg)'
+  ];
 
   void converter() {
     double valor = double.tryParse(quantidadeController.text) ?? 0;
+    double medida1 = medidasEquivalentes[selectedIngrediente]![selectedMedida1] ?? 1;
+    double medida2 = medidasEquivalentes[selectedIngrediente]![selectedMedida2] ?? 1;
 
-    // Realize a lógica de conversão que você precisa aqui
-    // Por exemplo, se deseja converter gramas para ml, faça a conversão aqui.
-    double resultadoConversao = valor * 1.0; 
+    double resultadoConversao = (valor * medida1) / medida2;
+    resultadoConversao = double.parse(resultadoConversao.toStringAsFixed(2));
 
     setState(() {
-      resultado = 'Resultado: $resultadoConversao'; 
-      mostrarResultado = true; 
+      resultado = 'Resultado: $resultadoConversao ${selectedMedida2.toLowerCase()}';
+      mostrarResultado = true;
     });
   }
 
@@ -42,57 +249,47 @@ class _ConversorState extends State<Conversor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
-        title: const Text(
-          'Tela de Cadastro',
-          style: TextStyle(
-            color: AppColors.textColor, // Define a cor do texto da AppBar como preto
-          ),
-        ),
+        title: Text('Conversor de Medidas'),
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Medidas\nEquivalentes',
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Medidas Equivalentes',
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                child: DropdownButtonFormField<String>(
-                  value: selectedIngrediente,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedIngrediente = newValue!;
-                    });
-                  },
-                  items: ingredientes.map((ingrediente) {
-                    return DropdownMenuItem<String>(
-                      value: ingrediente,
-                      child: Text(ingrediente),
-                    );
-                  }).toList(),
-                  decoration: InputDecoration(
-                    labelText: 'Ingrediente',
+                SizedBox(height: 16),
+                Padding(
+                  padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedIngrediente,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedIngrediente = newValue!;
+                      });
+                    },
+                    items: ingredientes.map((ingrediente) {
+                      return DropdownMenuItem<String>(
+                        value: ingrediente,
+                        child: Text(ingrediente),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Ingrediente',
+                    ),
                   ),
                 ),
-              ),
-
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 16, left: 16, right: 8),
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                       child: DropdownButtonFormField<String>(
                         value: selectedMedida1,
                         onChanged: (newValue) {
@@ -111,10 +308,8 @@ class _ConversorState extends State<Conversor> {
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 16, left: 8, right: 16),
+                    Padding(
+                      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                       child: DropdownButtonFormField<String>(
                         value: selectedMedida2,
                         onChanged: (newValue) {
@@ -133,42 +328,36 @@ class _ConversorState extends State<Conversor> {
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  controller: quantidadeController,
-                  decoration: InputDecoration(
-                    labelText: 'Quantidade',
-                  ),
+                  ],
                 ),
-              ),
-
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: converter,
-                child: Text('Converter'),
-                style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, 
-                    backgroundColor: Color.fromARGB(255, 218, 175, 167), 
-                  ),
-              ),
-              SizedBox(height: 16),
-              if (mostrarResultado) // Mostra o resultado somente se mostrarResultado for true
-                Container(
-                  child: Text(
-                    resultado,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.black,
+                Padding(
+                  padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: quantidadeController,
+                    decoration: InputDecoration(
+                      labelText: 'Quantidade',
                     ),
                   ),
                 ),
-            ],
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: converter,
+                  child: Text('Converter'),
+                ),
+                SizedBox(height: 16),
+                if (mostrarResultado)
+                  Container(
+                    child: Text(
+                      resultado,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

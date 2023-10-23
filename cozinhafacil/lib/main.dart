@@ -6,7 +6,7 @@ import 'utils/pallete.dart';
 //Telas
 import 'screens/login.dart';
 import 'screens/cadastro.dart';
-import 'screens/home.dart';
+
 import 'screens/conversor.dart';
 
 void main() => runApp(MyApp());
