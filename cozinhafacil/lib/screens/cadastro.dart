@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cozinhafacil/utils/pallete.dart';
+import 'DatabaseHelper.dart';
 
 class CadastroScreen extends StatefulWidget {
   @override
@@ -8,6 +9,9 @@ class CadastroScreen extends StatefulWidget {
 
 class _CadastroScreenState extends State<CadastroScreen> {
   bool _showPassword = false; // Variável para controlar a visibilidade da senha
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +33,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
               ),
               SizedBox(height: 35.0),
               TextField(
-                decoration: InputDecoration(
-                  labelText: 'Nome de Usuário',
-                ),
+              controller: usernameController, // Bind the username controller
+              decoration: InputDecoration(
+                labelText: 'Nome de Usuário',
               ),
+            ),
               SizedBox(height: 16.0),
               TextField(
+                controller: passwordController,
                 obscureText: !_showPassword, // Oculta a senha com base no valor de _showPassword
                 decoration: InputDecoration(
                   labelText: 'Senha',
@@ -66,46 +72,58 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 ),
               ),
               SizedBox(height: 32.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Lógica de cadastro aqui
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Cadastro concluído'),
-                        content: Text('Você está cadastrado!'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'OK',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 74, 96, 78),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Color.fromARGB(255, 218, 175, 167),
-                ),
-                child: Text('Cadastrar'),
-              ),
+               ElevatedButton(
+              onPressed: () async {
+                String username = usernameController.text;
+                String password = passwordController.text;
+
+                // Simple validation
+               if (username.isNotEmpty && password.isNotEmpty) {
+                Map<String, dynamic> newUser = {
+                    DatabaseHelper.columnUserName: username,
+                    DatabaseHelper.columnPassword: password
+                };
+                int? id = await DatabaseHelper.instance.insert(newUser);
+                if (id != null && id > 0) {
+                    print("deu bom");
+                } else {
+                    print("deu ruim");
+                }
+                } else {
+                    // Show a dialog or snackbar saying fields are empty
+                    print("Campos vazios!");
+                    return;
+                }
+
+
+                // Creating a row to insert
+                Map<String, dynamic> row = {
+                  DatabaseHelper.columnUserName : username,
+                  DatabaseHelper.columnPassword : password
+                };
+
+                final dbHelper = DatabaseHelper.instance;
+
+                // Insert the row and handle potential errors
+                try {
+                  final id = await dbHelper.insert(row);
+                  print('Usuário cadastrado com id: $id');
+                  // Navigate to another screen or show dialog saying 'User registered'
+                } catch (e) {
+                  print('Error: $e');
+                  // Show dialog or snackbar with error message
+                }
+              },
+              child: Text('Cadastrar'),
+            ),
+
             ],
           ),
         ),
       ),
     );
   }
+
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {

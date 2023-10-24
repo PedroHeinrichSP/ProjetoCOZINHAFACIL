@@ -9,7 +9,17 @@ import 'screens/cadastro.dart';
 
 import 'screens/conversor.dart';
 
-void main() => runApp(MyApp());
+//sql
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+
+import 'screens/DatabaseHelper.dart';
+
+Future<void> main() async {
+
+  runApp(MyApp());
+}
+
 
 class MyApp extends StatelessWidget {
   @override

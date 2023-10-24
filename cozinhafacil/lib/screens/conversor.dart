@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cozinhafacil/utils/pallete.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -249,7 +250,16 @@ class _ConversorState extends State<Conversor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Conversor de Medidas'),
+        backgroundColor: AppColors.primaryColor,
+        iconTheme: IconThemeData(
+          color: AppColors.textColor,
+        ),
+        title: const Text(
+          'Conversor de Medidas',
+          style: TextStyle(
+            color: AppColors.textColor,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(
