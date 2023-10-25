@@ -1,7 +1,7 @@
-import 'package:cozinhafacil/utils/pallete.dart';
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'user_model.dart';
+import 'perfil.dart';
 
 class CadastroScreen extends StatefulWidget {
   @override
@@ -13,7 +13,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
 
-  // Função para mostrar a caixa de diálogo
   Future<void> _showAlertDialog(BuildContext context, String message) async {
     return showDialog<void>(
       context: context,
@@ -32,9 +31,17 @@ class _CadastroScreenState extends State<CadastroScreen> {
             TextButton(
               child: Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha a caixa de diálogo
+                Navigator.of(context).pop();
                 if (message == "Cadastro bem-sucedido!") {
-                  Navigator.of(context).pop(); // Volta para a tela de login
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PerfilScreen(
+                        username: _usernameController.text,
+                        password: _passwordController.text,
+                      ),
+                    ),
+                  );
                 }
               },
             ),
@@ -44,7 +51,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
   }
 
-  // Função para validar os campos
   bool _validateFields() {
     if (_usernameController.text.isEmpty ||
         _passwordController.text.isEmpty ||
@@ -62,16 +68,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
-        iconTheme: const IconThemeData(
-          color: AppColors.textColor,
-        ),
-        title: const Text(
-          'Cadastro',
-          style: TextStyle(
-            color: AppColors.textColor,
-          ),
-        ),
+        title: Text('Cadastro'),
       ),
       body: Center(
         child: Padding(
@@ -88,7 +85,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20.0),
-              // Campos de entrada para nome de usuário, senha e confirmação de senha
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(labelText: 'Username'),
@@ -115,10 +111,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
                       );
                       int id = await DatabaseHelper.instance.insert(newUser);
                       if (id > 0) {
-                        // Cadastro bem-sucedido
                         _showAlertDialog(context, "Cadastro bem-sucedido!");
+                      } else if (id == -1) {
+                        _showAlertDialog(context, "Usuário já existe.");
                       } else {
-                        // Falha no cadastro
                         _showAlertDialog(context, "Falha no cadastro!");
                       }
                     }

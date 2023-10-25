@@ -1,98 +1,114 @@
 import 'package:flutter/material.dart';
-import 'package:cozinhafacil/utils/pallete.dart';
+import 'database_helper.dart';
+import 'user_model.dart';
 
-void main() => runApp(MaterialApp(
-      home: PerfilScreen(),
-    ));
+// Tela de Perfil para exibir e alterar informações do usuário
+class PerfilScreen extends StatefulWidget {
+  final String username;
+  final String password;
 
-class PerfilScreen extends StatelessWidget {
+  // Construtor da tela de perfil com nome de usuário e senha como parâmetros obrigatórios
+  PerfilScreen({required this.username, required this.password});
+
+  @override
+  _PerfilScreenState createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends State<PerfilScreen> {
+  TextEditingController _newPasswordController = TextEditingController(); // Controlador para a nova senha
+  late String _currentPassword; // Senha atual
+
+  // Inicializa o estado com a senha atual do widget
+  @override
+  void initState() {
+    super.initState();
+    _currentPassword = widget.password;
+  }
+
+  // Função para atualizar a senha
+  void _changePassword() async {
+    if (_newPasswordController.text.isEmpty) {
+      _showAlertDialog(context, "Por favor, insira a nova senha.");
+    } else {
+      await DatabaseHelper.instance.updatePassword(widget.username, _newPasswordController.text);
+      setState(() {
+        _currentPassword = _newPasswordController.text; // Atualiza a senha atual com a nova senha
+        _newPasswordController.clear(); // Limpa o controlador da nova senha
+      });
+    }
+  }
+
+  // Função para mostrar a caixa de diálogo
+  Future<void> _showAlertDialog(BuildContext context, String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Mudança de Senha'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha a caixa de diálogo
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Constrói a tela do perfil
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
-        iconTheme: IconThemeData(
-          color: AppColors.textColor,
-        ),
-        title: const Text(
-          'Perfil',
-          style: TextStyle(
-            color: AppColors.textColor,
-          ),
-        ),
+        title: Text('Perfil'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 140,
-              height: 140,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.buttonPrimaryColor, // Altere para verde
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Username: ${widget.username}', // Exibe o nome de usuário
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              child: Icon(
-                Icons.person,
-                size: 100,
-                color: Colors.white,
+              SizedBox(height: 20.0),
+              Text(
+                'Senha: $_currentPassword', // Exibe a senha atual
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Nome do Usuário',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 20.0),
+              TextField(
+                controller: _newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Nova Senha'), // Campo de entrada para a nova senha
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'nome.usuario@email.com',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
+              SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () {
+                  _changePassword(); // Chama a função para atualizar a senha
+                },
+                child: Text('Trocar Senha'), // Botão para alterar a senha
               ),
-            ),
-            SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.phone),
-              title: Text('Telefone'),
-              subtitle: Text('+55 11 1234-5678'),
-            ),
-            ListTile(
-              leading: Icon(Icons.location_on),
-              title: Text('Endereço'),
-              subtitle: Text('Rua da Amostra, 123'),
-            ),
-            SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                // Implemente a lógica de saída da conta aqui
-                // Por exemplo, você pode fazer logout do usuário
-                // e redirecioná-lo para a tela de login.
-                Navigator.of(context).pop(); // Fecha a tela de perfil
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.exit_to_app,
-                    color: Colors.red,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Sair da Conta',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.red,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

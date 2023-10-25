@@ -1,7 +1,7 @@
 class User {
-  int? id;        
-  String? username;  
-  String? password;  
+  int? id;
+  String? username;
+  String? password;
 
   // Construtor da classe User, que permite criar uma instância com valores opcionais
   User({this.id, this.username, this.password});
@@ -17,8 +17,8 @@ class User {
 
   // Construtor alternativo que cria um objeto User a partir de um mapa
   User.fromMap(Map<String, dynamic> map) {
-    id = map['id'];          // Atribui o valor 'id' do mapa à propriedade id
-    username = map['username'];  // Atribui o valor 'username' do mapa à propriedade username
-    password = map['password'];  // Atribui o valor 'password' do mapa à propriedade password
+    id = map['id'] as int;          // Atribui o valor 'id' do mapa à propriedade id
+    username = map['username'] as String;  // Atribui o valor 'username' do mapa à propriedade username
+    password = map['password'] as String;  // Atribui o valor 'password' do mapa à propriedade password
   }
 }
