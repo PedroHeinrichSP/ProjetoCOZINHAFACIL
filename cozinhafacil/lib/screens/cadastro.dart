@@ -88,6 +88,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20.0),
+              // Campos de entrada para nome de usuário, senha e confirmação de senha
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(labelText: 'Username'),

@@ -13,7 +13,6 @@ import 'screens/conversor.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
-import 'screens/DatabaseHelper.dart';
 
 Future<void> main() async {
 

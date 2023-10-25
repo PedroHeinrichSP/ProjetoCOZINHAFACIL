@@ -14,7 +14,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Função para exibir um AlertDialog com uma mensagem
     Future<void> _showAlertDialog(String message) async {
+      // Mostra um diálogo modal com a mensagem fornecida
       return showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -56,13 +58,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(height: 20.0),
+              // Campos de entrada para nome de usuário e senha
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(labelText: 'Username'),
               ),
               TextField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: true, // Oculta a senha digitada
                 decoration: InputDecoration(labelText: 'Password'),
               ),
               Padding(
@@ -70,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   child: Text("Login"),
                   onPressed: () async {
+                    // Tenta consultar o usuário no banco de dados
                     User? user = await DatabaseHelper.instance.queryUser(_usernameController.text);
                     if (user != null && user.password == _passwordController.text) {
                       // Login bem-sucedido
@@ -89,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 10.0),
               TextButton(
                 onPressed: () {
+                  // Navega para a tela de cadastro quando o botão é pressionado
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => CadastroScreen()),
                   );
