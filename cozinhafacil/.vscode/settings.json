@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/felip/Downloads/cozinhafacil/linux"
+    "cmake.sourceDirectory": "C:/Users/felip/Downloads/cozinhafacil/linux",
+    "cmake.configureOnOpen": false
 }
