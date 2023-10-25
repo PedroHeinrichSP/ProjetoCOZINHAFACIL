@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:cozinhafacil/utils/pallete.dart';
-import 'DatabaseHelper.dart';
+import 'package:flutter/material.dart';
+import 'database_helper.dart';
+import 'user_model.dart';
 
 class CadastroScreen extends StatefulWidget {
   @override
@@ -8,139 +9,123 @@ class CadastroScreen extends StatefulWidget {
 }
 
 class _CadastroScreenState extends State<CadastroScreen> {
-  bool _showPassword = false; // Variável para controlar a visibilidade da senha
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
 
+  // Função para mostrar a caixa de diálogo
+  Future<void> _showAlertDialog(BuildContext context, String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Resultado do Cadastro'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha a caixa de diálogo
+                if (message == "Cadastro bem-sucedido!") {
+                  Navigator.of(context).pop(); // Volta para a tela de login
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Função para validar os campos
+  bool _validateFields() {
+    if (_usernameController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      _showAlertDialog(context, "Por favor, preencha todos os campos.");
+      return false;
+    } else if (_passwordController.text != _confirmPasswordController.text) {
+      _showAlertDialog(context, "As senhas não coincidem.");
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(), // Usar a CustomAppBar personalizada
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryColor,
+        iconTheme: const IconThemeData(
+          color: AppColors.textColor,
+        ),
+        title: const Text(
+          'Cadastro',
+          style: TextStyle(
+            color: AppColors.textColor,
+          ),
+        ),
+      ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Olá,\nBem vindo!',
+                'Olá,\nBem-vindo',
                 style: TextStyle(
-                  fontSize: 40.0,
+                  fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 ),
-                textAlign: TextAlign.center, // Alinha o texto ao centro
+                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 35.0),
+              SizedBox(height: 20.0),
               TextField(
-              controller: usernameController, // Bind the username controller
-              decoration: InputDecoration(
-                labelText: 'Nome de Usuário',
+                controller: _usernameController,
+                decoration: InputDecoration(labelText: 'Username'),
               ),
-            ),
-              SizedBox(height: 16.0),
               TextField(
-                controller: passwordController,
-                obscureText: !_showPassword, // Oculta a senha com base no valor de _showPassword
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  // Adiciona o ícone de "olho" para mostrar/ocultar a senha
-                  suffixIcon: IconButton(
-                    icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _showPassword = !_showPassword; // Alterna a visibilidade da senha
-                      });
-                    },
-                  ),
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Password'),
+              ),
+              TextField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Confirm Password'),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: ElevatedButton(
+                  child: Text("Registrar"),
+                  onPressed: () async {
+                    if (_validateFields()) {
+                      User newUser = User(
+                        username: _usernameController.text,
+                        password: _passwordController.text,
+                      );
+                      int id = await DatabaseHelper.instance.insert(newUser);
+                      if (id > 0) {
+                        // Cadastro bem-sucedido
+                        _showAlertDialog(context, "Cadastro bem-sucedido!");
+                      } else {
+                        // Falha no cadastro
+                        _showAlertDialog(context, "Falha no cadastro!");
+                      }
+                    }
+                  },
                 ),
               ),
-              SizedBox(height: 16.0),
-              TextField(
-                obscureText: !_showPassword, // Oculta a senha com base no valor de _showPassword
-                decoration: InputDecoration(
-                  labelText: 'Confirme a Senha',
-                  // Adiciona o ícone de "olho" para mostrar/ocultar a senha
-                  suffixIcon: IconButton(
-                    icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _showPassword = !_showPassword; // Alterna a visibilidade da senha
-                      });
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 32.0),
-               ElevatedButton(
-              onPressed: () async {
-                String username = usernameController.text;
-                String password = passwordController.text;
-
-                // Simple validation
-               if (username.isNotEmpty && password.isNotEmpty) {
-                Map<String, dynamic> newUser = {
-                    DatabaseHelper.columnUserName: username,
-                    DatabaseHelper.columnPassword: password
-                };
-                int? id = await DatabaseHelper.instance.insert(newUser);
-                if (id != null && id > 0) {
-                    print("deu bom");
-                } else {
-                    print("deu ruim");
-                }
-                } else {
-                    // Show a dialog or snackbar saying fields are empty
-                    print("Campos vazios!");
-                    return;
-                }
-
-
-                // Creating a row to insert
-                Map<String, dynamic> row = {
-                  DatabaseHelper.columnUserName : username,
-                  DatabaseHelper.columnPassword : password
-                };
-
-                final dbHelper = DatabaseHelper.instance;
-
-                // Insert the row and handle potential errors
-                try {
-                  final id = await dbHelper.insert(row);
-                  print('Usuário cadastrado com id: $id');
-                  // Navigate to another screen or show dialog saying 'User registered'
-                } catch (e) {
-                  print('Error: $e');
-                  // Show dialog or snackbar with error message
-                }
-              },
-              child: Text('Cadastrar'),
-            ),
-
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-}
-
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  Size get preferredSize => Size.fromHeight(56.0); // Altura da AppBar
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColors.primaryColor,
-      iconTheme: IconThemeData(
-        color: AppColors.textColor, // Define a cor do ícone (seta de voltar)
-      ),
-      title: const Text(
-        'Tela de Cadastro',
-        style: TextStyle(
-          color: AppColors.textColor, // Define a cor do texto da AppBar como preto
         ),
       ),
     );

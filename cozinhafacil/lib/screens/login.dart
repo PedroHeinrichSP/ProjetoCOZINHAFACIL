@@ -1,156 +1,99 @@
-import 'package:cozinhafacil/utils/pallete.dart';
+import 'package:cozinhafacil/screens/cadastro.dart';
 import 'package:flutter/material.dart';
-import 'perfil.dart';
-import 'DatabaseHelper.dart';
+import 'database_helper.dart';
+import 'user_model.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
 
-  Future<void> _handleLogin(BuildContext context) async {
-      // Fetch the user from the database
-      var user = await DatabaseHelper.instance.fetchUser(
-        _loginUsernameController.text,
-        _loginPasswordController.text
-      );
+class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
-      // Check if user was found
-      if (user != null) {
-        // Successful login
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Login bem-sucedido'),
-            content: Text('Bem-vindo, ${user['username']}!'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      } else {
-        // Failed login
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Falha no login'),
-            content: Text('Nome de usuário ou senha incorretos!'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      }
-    }
-
-
-  final _loginUsernameController = TextEditingController();
-  final _loginPasswordController = TextEditingController();
-  
   @override
   Widget build(BuildContext context) {
+    Future<void> _showAlertDialog(String message) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Resultado do Login'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.all(16.0), // Espaço ao redor do texto
-                child: Text(
-                  'Olá,\nBem vindo!',
-                  style: TextStyle(
-                    
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-
-                  ),
+              Text(
+                'Olá,\nBem-vindo',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                child: TextField(
-                  
-                 
-                  decoration: InputDecoration(
-                    labelText: 'Nome de Usuário',
-                  ),
-                ),
+              SizedBox(height: 20.0),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(labelText: 'Username'),
               ),
-              PasswordTextField(),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Password'),
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 16, right:16, bottom: 32),
+                padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                onPressed: () async {  // torna o método assíncrono
-      _handleLogin(context);
-    
-      var user = await DatabaseHelper.instance.fetchUser(
-        _loginUsernameController.text,
-        _loginPasswordController.text
-      );
-
-      // Check if user was found
-      if (user != null) {
-        // Successful login
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Login bem-sucedido'),
-                  content: Text('Bem-vindo, ${user['username']}!'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
+                  child: Text("Login"),
+                  onPressed: () async {
+                    User? user = await DatabaseHelper.instance.queryUser(_usernameController.text);
+                    if (user != null && user.password == _passwordController.text) {
+                      // Login bem-sucedido
+                      _showAlertDialog("Login bem-sucedido!");
+                      // Você pode adicionar a navegação para a próxima tela aqui
+                      // Por exemplo:
+                      // Navigator.of(context).pushReplacement(
+                      //   MaterialPageRoute(builder: (context) => TelaPrincipal()),
+                      // );
+                    } else {
+                      // Falha no login
+                      _showAlertDialog("Username ou senha incorretos!");
+                    }
+                  },
                 ),
-              );
-            } else {
-              // Failed login
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Falha no login'),
-                  content: Text('Nome de usuário ou senha incorretos!'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            } 
-            },
-                child: Text('Login'),
               ),
-
-                ),
-              InkWell(
-                onTap: () {
-                  // Navegar para a tela de cadastro quando pressionar o texto
-                  Navigator.pushNamed(context, '/cadastro');
+              SizedBox(height: 10.0),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => CadastroScreen()),
+                  );
                 },
-                child: const Text(
-                  'Primeira vez por aqui?\nCadastre-se',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                child: Text("Novo por aqui?\nCadastra-se"),
               ),
             ],
           ),
@@ -159,38 +102,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-class PasswordTextField extends StatefulWidget{
-  const PasswordTextField({super.key});
-
-  @override
-  _PasswordTextFieldState createState() => _PasswordTextFieldState();
-}
-class _PasswordTextFieldState extends State<PasswordTextField> {
-  TextEditingController _passwordController = TextEditingController();
-  bool _isObscured = true;//Track password is visible or not
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
-        child: TextField(
-          obscureText: _isObscured,
-          decoration: InputDecoration(
-            labelText: 'Senha',
-            suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  _isObscured = !_isObscured; // Toggle the value of _isObscured
-                });
-              },
-              icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
-            ),
-          ),
-          enableSuggestions: false,
-        ),
-    );
-  }
-
-
-}
-
