@@ -353,6 +353,10 @@ class _ConversorState extends State<Conversor> {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: converter,
+                  style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                ),
                   child: Text('Converter'),
                 ),
                 SizedBox(height: 16),

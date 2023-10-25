@@ -3,7 +3,8 @@ import 'package:cozinhafacil/screens/perfil.dart';
 import 'database_helper.dart';
 import 'user_model.dart';
 import 'package:cozinhafacil/screens/cadastro.dart';
-import 'crud_operations.dart'; // Importando a página com operações CRUD
+import 'package:cozinhafacil/utils/pallete.dart';
+import 'crud_operations.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -67,44 +68,55 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Olá,\nBem-vindo',
+                'Faça login para aproveitar o melhor do aplicativo!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 22.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 20.0),
               TextField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
-              ),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  child: Text("Login"),
-                  onPressed: () async {
-                    User? user = await DatabaseHelper.instance.queryUser(_usernameController.text);
-                    if (user != null && user.password == _passwordController.text) {
-                      _showAlertDialog("Login bem-sucedido!");
-                    } else {
-                      _showAlertDialog("Username ou senha incorretos!");
-                    }
-                  },
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
               ),
               SizedBox(height: 10.0),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => CadastroScreen()),
-                  );
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                ),
+                child: Text("Login"),
+                onPressed: () async {
+                  User? user = await DatabaseHelper.instance
+                      .queryUser(_usernameController.text);
+                  if (user != null &&
+                      user.password == _passwordController.text) {
+                    _showAlertDialog("Login bem-sucedido!");
+                  } else {
+                    _showAlertDialog("Username ou senha incorretos!");
+                  }
                 },
-                child: Text("Novo por aqui?\nCadastra-se"),
               ),
               SizedBox(height: 10.0),
               ElevatedButton(
@@ -114,7 +126,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     MaterialPageRoute(builder: (context) => CRUDOperations()),
                   );
                 },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                ),
                 child: Text("CRUD"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => CadastroScreen()),
+                  );
+                },
+                child: Text("Novo por aqui? Cadastra-se"),
               ),
             ],
           ),

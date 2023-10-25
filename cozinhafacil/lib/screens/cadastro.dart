@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'user_model.dart';
 import 'perfil.dart';
+import 'package:cozinhafacil/utils/pallete.dart';
+
 
 class CadastroScreen extends StatefulWidget {
   @override
@@ -68,8 +70,11 @@ class _CadastroScreenState extends State<CadastroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cadastro'),
-      ),
+        backgroundColor: AppColors.primaryColor,
+        title: Text('Cadastro',
+        style: TextStyle(
+      color: AppColors.textColor, // Define a cor do texto),
+      ))),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -77,49 +82,74 @@ class _CadastroScreenState extends State<CadastroScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Olá,\nBem-vindo',
+                'Faça seu cadastro e adicione suas receitas!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 22.0,
                   fontWeight: FontWeight.bold,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(height: 20.0),
               TextField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
               ),
+              SizedBox(height: 10.0),
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
               ),
+              SizedBox(height: 10.0),
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Confirm Password'),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: ElevatedButton(
-                  child: Text("Registrar"),
-                  onPressed: () async {
-                    if (_validateFields()) {
-                      User newUser = User(
-                        username: _usernameController.text,
-                        password: _passwordController.text,
-                      );
-                      int id = await DatabaseHelper.instance.insert(newUser);
-                      if (id > 0) {
-                        _showAlertDialog(context, "Cadastro bem-sucedido!");
-                      } else if (id == -1) {
-                        _showAlertDialog(context, "Usuário já existe.");
-                      } else {
-                        _showAlertDialog(context, "Falha no cadastro!");
-                      }
-                    }
-                  },
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
+              ),
+              SizedBox(height: 20.0), // Espaço adicionado
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                ),
+                child: Text("Registrar"),
+                onPressed: () async {
+                  if (_validateFields()) {
+                    User newUser = User(
+                      username: _usernameController.text,
+                      password: _passwordController.text,
+                    );
+                    int id = await DatabaseHelper.instance.insert(newUser);
+                    if (id > 0) {
+                      _showAlertDialog(context, "Cadastro bem-sucedido!");
+                    } else if (id == -1) {
+                      _showAlertDialog(context, "Usuário já existe.");
+                    } else {
+                      _showAlertDialog(context, "Falha no cadastro!");
+                    }
+                  }
+                },
               ),
             ],
           ),
