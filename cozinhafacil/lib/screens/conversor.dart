@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cozinhafacil/utils/pallete.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: Conversor(),
   ));
 }
 
 class Conversor extends StatefulWidget {
+  const Conversor({super.key});
+
   @override
   _ConversorState createState() => _ConversorState();
 }
@@ -234,14 +236,17 @@ class _ConversorState extends State<Conversor> {
 
   void converter() {
     double valor = double.tryParse(quantidadeController.text) ?? 0;
-    double medida1 = medidasEquivalentes[selectedIngrediente]![selectedMedida1] ?? 1;
-    double medida2 = medidasEquivalentes[selectedIngrediente]![selectedMedida2] ?? 1;
+    double medida1 =
+        medidasEquivalentes[selectedIngrediente]![selectedMedida1] ?? 1;
+    double medida2 =
+        medidasEquivalentes[selectedIngrediente]![selectedMedida2] ?? 1;
 
     double resultadoConversao = (valor * medida1) / medida2;
     resultadoConversao = double.parse(resultadoConversao.toStringAsFixed(2));
 
     setState(() {
-      resultado = 'Resultado: $resultadoConversao ${selectedMedida2.toLowerCase()}';
+      resultado =
+          'Resultado: $resultadoConversao ${selectedMedida2.toLowerCase()}';
       mostrarResultado = true;
     });
   }
@@ -251,7 +256,7 @@ class _ConversorState extends State<Conversor> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: AppColors.textColor,
         ),
         title: const Text(
@@ -261,118 +266,121 @@ class _ConversorState extends State<Conversor> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.only(bottom: 72.0),
+              child: Text(
+                'Medidas Equivalentes',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 50.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(bottom: 16.0, right: 16.0, left: 16.0),
+              child: DropdownButtonFormField<String>(
+                value: selectedIngrediente,
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedIngrediente = newValue!;
+                  });
+                },
+                items: ingredientes.map((ingrediente) {
+                  return DropdownMenuItem<String>(
+                    value: ingrediente,
+                    child: Text(ingrediente),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(
+                  labelText: 'Ingrediente',
+                ),
+              ),
+            ),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'Medidas Equivalentes',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Padding(
-                  padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: DropdownButtonFormField<String>(
-                    value: selectedIngrediente,
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectedIngrediente = newValue!;
-                      });
-                    },
-                    items: ingredientes.map((ingrediente) {
-                      return DropdownMenuItem<String>(
-                        value: ingrediente,
-                        child: Text(ingrediente),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      labelText: 'Ingrediente',
-                    ),
-                  ),
-                ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                      child: DropdownButtonFormField<String>(
-                        value: selectedMedida1,
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedMedida1 = newValue!;
-                          });
-                        },
-                        items: medidas.map((medida) {
-                          return DropdownMenuItem<String>(
-                            value: medida,
-                            child: Text(medida),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                          labelText: 'Medida 1',
-                        ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                    child: DropdownButtonFormField<String>(
+                      value: selectedMedida1,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedMedida1 = newValue!;
+                        });
+                      },
+                      items: medidas.map((medida) {
+                        return DropdownMenuItem<String>(
+                          value: medida,
+                          child: Text(medida),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'De',
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                      child: DropdownButtonFormField<String>(
-                        value: selectedMedida2,
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedMedida2 = newValue!;
-                          });
-                        },
-                        items: medidas.map((medida) {
-                          return DropdownMenuItem<String>(
-                            value: medida,
-                            child: Text(medida),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                          labelText: 'Medida 2',
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: quantidadeController,
-                    decoration: InputDecoration(
-                      labelText: 'Quantidade',
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                    child: DropdownButtonFormField<String>(
+                      value: selectedMedida2,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedMedida2 = newValue!;
+                        });
+                      },
+                      items: medidas.map((medida) {
+                        return DropdownMenuItem<String>(
+                          value: medida,
+                          child: Text(medida),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'Para',
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: converter,
-                  style: ButtonStyle(
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                controller: quantidadeController,
+                decoration: const InputDecoration(
+                  labelText: 'Quantidade',
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 32, bottom: 32.0),
+              child: ElevatedButton(
+                onPressed: converter,
+                style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all(AppColors.buttonSecondaryColor),
                 ),
-                  child: Text('Converter'),
-                ),
-                SizedBox(height: 16),
-                if (mostrarResultado)
-                  Container(
-                    child: Text(
-                      resultado,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-              ],
+                child: const Text('Converter'),
+              ),
             ),
-          ),
+            if (mostrarResultado)
+              Text(
+                resultado,
+                style: const TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.black,
+                ),
+              ),
+          ],
         ),
       ),
     );

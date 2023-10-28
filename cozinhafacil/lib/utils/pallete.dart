@@ -7,7 +7,7 @@ class AppColors {
   static const Color textColor = Color(0xFF343341); // Dark Gray
   static const Color secondaryTextColor = Color(0xFF555555); // Slate Gray
   static const Color buttonPrimaryColor = Color(0xFF789A7E); // Ocean Blue
-  static const Color buttonSecondaryColor = Color(0xFF343341); // Teal
+  static const Color buttonSecondaryColor = Color(0xFFD8AEA8); // Teal
   static const Color cardColor = Colors.white; // White
   static const Color iconColor = Color(0xFF666666); // Medium Gray
 
