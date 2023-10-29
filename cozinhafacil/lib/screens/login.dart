@@ -67,70 +67,71 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'Faça login para aproveitar o melhor do aplicativo!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  'Olá,\nBem vindo!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
-              SizedBox(height: 10.0),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              Padding(
+                padding: const EdgeInsets.only(bottom:16.0),
+                child: TextField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
-              SizedBox(height: 10.0),
-              ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+              Padding(
+                padding: const EdgeInsets.only(bottom:16.0),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                  ),
                 ),
-                child: Text("Login"),
-                onPressed: () async {
-                  User? user = await DatabaseHelper.instance
-                      .queryUser(_usernameController.text);
-                  if (user != null &&
-                      user.password == _passwordController.text) {
-                    _showAlertDialog("Login bem-sucedido!");
-                  } else {
-                    _showAlertDialog("Username ou senha incorretos!");
-                  }
-                },
               ),
-              SizedBox(height: 10.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CRUDOperations()),
-                  );
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+              Padding(
+                padding: const EdgeInsets.only(top:32.0, bottom: 16.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                  ),
+                  child: Text("Login"),
+                  onPressed: () async {
+                    User? user = await DatabaseHelper.instance
+                        .queryUser(_usernameController.text);
+                    if (user != null &&
+                        user.password == _passwordController.text) {
+                      _showAlertDialog("Login bem-sucedido!");
+                    } else {
+                      _showAlertDialog("Username ou senha incorretos!");
+                    }
+                  },
                 ),
-                child: Text("CRUD"),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CRUDOperations()),
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                  ),
+                  child: Text("CRUD"),
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -138,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     MaterialPageRoute(builder: (context) => CadastroScreen()),
                   );
                 },
-                child: Text("Novo por aqui? Cadastra-se"),
+                child: Text("Novo por aqui? Cadastre-se"),
               ),
             ],
           ),

@@ -4,7 +4,6 @@ import 'user_model.dart';
 import 'perfil.dart';
 import 'package:cozinhafacil/utils/pallete.dart';
 
-
 class CadastroScreen extends StatefulWidget {
   @override
   _CadastroScreenState createState() => _CadastroScreenState();
@@ -21,7 +20,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Resultado do Cadastro'),
+          title: const Text('Resultado do Cadastro'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -31,7 +30,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
                 if (message == "Cadastro bem-sucedido!") {
@@ -70,86 +69,82 @@ class _CadastroScreenState extends State<CadastroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
-        title: Text('Cadastro',
-        style: TextStyle(
-      color: AppColors.textColor, // Define a cor do texto),
-      ))),
+          backgroundColor: AppColors.primaryColor,
+          title: const Text('Cadastro',
+              style: TextStyle(
+                color: AppColors.textColor,
+              ))),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'Faça seu cadastro e adicione suas receitas!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 32.0),
+                child: Text(
+                  'Realize seu cadastro e adicione novas receitas!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
-              SizedBox(height: 10.0),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: TextField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Usuário',
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
-              SizedBox(height: 10.0),
-              TextField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Senha',
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
               ),
-              SizedBox(height: 20.0), // Espaço adicionado
-              ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirme a senha',
+                  ),
                 ),
-                child: Text("Registrar"),
-                onPressed: () async {
-                  if (_validateFields()) {
-                    User newUser = User(
-                      username: _usernameController.text,
-                      password: _passwordController.text,
-                    );
-                    int id = await DatabaseHelper.instance.insert(newUser);
-                    if (id > 0) {
-                      _showAlertDialog(context, "Cadastro bem-sucedido!");
-                    } else if (id == -1) {
-                      _showAlertDialog(context, "Usuário já existe.");
-                    } else {
-                      _showAlertDialog(context, "Falha no cadastro!");
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.buttonSecondaryColor),
+                  ),
+                  child: Text("Registrar"),
+                  onPressed: () async {
+                    if (_validateFields()) {
+                      User newUser = User(
+                        username: _usernameController.text,
+                        password: _passwordController.text,
+                      );
+                      int id = await DatabaseHelper.instance.insert(newUser);
+                      if (id > 0) {
+                        _showAlertDialog(context, "Cadastro bem-sucedido!");
+                      } else if (id == -1) {
+                        _showAlertDialog(context, "Usuário já existe.");
+                      } else {
+                        _showAlertDialog(context, "Falha no cadastro!");
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
             ],
           ),
