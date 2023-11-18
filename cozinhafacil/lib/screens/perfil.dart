@@ -1,63 +1,54 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
-import 'user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// Tela de Perfil para exibir e alterar informações do usuário
 class PerfilScreen extends StatefulWidget {
-  final String username;
-  final String password;
-
-  // Construtor da tela de perfil com nome de usuário e senha como parâmetros obrigatórios
-  PerfilScreen({required this.username, required this.password});
-
   @override
   _PerfilScreenState createState() => _PerfilScreenState();
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  TextEditingController _newPasswordController = TextEditingController(); // Controlador para a nova senha
-  late String _currentPassword; // Senha atual
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late User? _user;
+  late TextEditingController _passwordController;
 
-  // Inicializa o estado com a senha atual do widget
   @override
   void initState() {
     super.initState();
-    _currentPassword = widget.password;
+    _user = _auth.currentUser;
+    _passwordController = TextEditingController();
   }
 
-  // Função para atualizar a senha
   void _changePassword() async {
-    if (_newPasswordController.text.isEmpty) {
-      _showAlertDialog(context, "Por favor, insira a nova senha.");
-    } else {
-      await DatabaseHelper.instance.updatePassword(widget.username, _newPasswordController.text);
-      setState(() {
-        _currentPassword = _newPasswordController.text; // Atualiza a senha atual com a nova senha
-        _newPasswordController.clear(); // Limpa o controlador da nova senha
-      });
+    try {
+      await _user?.updatePassword(_passwordController.text);
+      _showSnackBar('Senha alterada com sucesso.');
+    } catch (error) {
+      // Trate os erros aqui, por exemplo, exiba uma mensagem de erro
+      _showSnackBar('Erro ao alterar a senha: $error');
     }
   }
 
-  // Função para mostrar a caixa de diálogo
-  Future<void> _showAlertDialog(BuildContext context, String message) async {
-    return showDialog<void>(
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showUserId() {
+    showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Mudança de Senha'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(message),
-              ],
-            ),
-          ),
+          title: Text('ID Único do Usuário'),
+          content: Text('ID: ${_user?.uid ?? 'N/A'}'),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: Text('Fechar'),
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha a caixa de diálogo
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -66,49 +57,80 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  // Constrói a tela do perfil
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Perfil'),
+        backgroundColor: Colors.brown[200], // Cor de fundo da AppBar (marrom claro)
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop(); // Volta para a tela anterior
+          },
+        ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Username: ${widget.username}', // Exibe o nome de usuário
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            SizedBox(height: 20.0), // Adicionado espaçamento
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.account_circle,
+                  size: 100.0,
+                  color: Colors.brown[200], // Cor do ícone (marrom claro)
                 ),
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Senha: $_currentPassword', // Exibe a senha atual
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+              ],
+            ),
+            SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.person, color: Colors.brown[200]), // Ícone personalizado (marrom claro)
+                    SizedBox(width: 8.0),
+                    Text(
+                      'ID Único:',
+                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
+                    ),
+                  ],
                 ),
+                ElevatedButton(
+                  onPressed: _showUserId,
+                  child: Icon(Icons.info, color: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.brown[200], // Cor do botão (marrom claro)
+                    shape: CircleBorder(),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20.0),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Nova Senha',
+                icon: Icon(Icons.lock, color: Colors.brown[200]), // Ícone personalizado (marrom claro)
               ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: _newPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Nova Senha'), // Campo de entrada para a nova senha
+              obscureText: true,
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: _changePassword,
+              child: Text('Alterar Senha'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown[200], // Cor do botão (marrom claro)
+                textStyle: TextStyle(fontSize: 18.0),
               ),
-              SizedBox(height: 20.0),
-              ElevatedButton(
-                onPressed: () {
-                  _changePassword(); // Chama a função para atualizar a senha
-                },
-                child: Text('Trocar Senha'), // Botão para alterar a senha
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 20.0), // Adicionado espaçamento
+          ],
         ),
       ),
     );

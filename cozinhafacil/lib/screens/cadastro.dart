@@ -1,24 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'login.dart';
 
 class SignUpScreen extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _register(BuildContext context) {
+  void _register(BuildContext context) async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    _auth.createUserWithEmailAndPassword(email: email, password: password)
-        .then((userCredential) {
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
       // Handle success, user is registered in Firebase Authentication.
       _showDialog(context, "Usuário registrado com sucesso. ID: ${userCredential.user!.uid}");
-    }).catchError((error) {
+
+      // Delay for 4 seconds and then navigate to login
+      await Future.delayed(Duration(seconds: 4));
+      
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } catch (error) {
       // Handle error.
       String errorMessage = _getErrorMessage(error);
       _showDialog(context, errorMessage);
-    });
+    }
   }
 
   String _getErrorMessage(dynamic error) {
@@ -39,7 +52,7 @@ class SignUpScreen extends StatelessWidget {
           errorMessage = 'O método de registro não está habilitado. Entre em contato com o suporte.';
           break;
         default:
-          errorMessage = 'Erro ao registrar usuário: ${error.message}';
+          errorMessage = 'Erro ao registrar usuário';
           break;
       }
     }
@@ -72,6 +85,7 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cadastro'),
+        backgroundColor: Colors.brown[200], // Tema marrom claro
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -92,8 +106,20 @@ class SignUpScreen extends StatelessWidget {
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () => _register(context),
-              child: Text('Registrar'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.person_add), // Adicionando ícone ao botão
+                  SizedBox(width: 8.0),
+                  Text('Registrar'),
+                ],
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown[700], // Cor marrom mais escura
+                onPrimary: Colors.white, // Texto branco
+              ),
             ),
+            SizedBox(height: 20.0),
           ],
         ),
       ),
