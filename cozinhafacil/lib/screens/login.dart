@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'cadastro.dart';
 import 'cadastroReceitas.dart';
 import 'perfil.dart' as perfil;
+import 'receitasCurtidas.dart'; // Importe a página ReceitasCurtidasPage
 import 'package:firebase_auth/firebase_auth.dart';
 import 'minhasReceitas.dart';
 
@@ -20,19 +21,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-  super.initState();
-  WidgetsBinding.instance?.addPostFrameCallback((_) {
-    _checkLoginStatus();
-  });
-}
-  void _checkLoginStatus() async {
-  User? user = _auth.currentUser;
-  if (user != null) {
-    setState(() {
-      _isLoggedIn = true;
-      _userId = user.uid; // Adiciona esta linha para armazenar o ID do usuário
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _checkLoginStatus();
     });
   }
+
+  void _checkLoginStatus() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      setState(() {
+        _isLoggedIn = true;
+        _userId = user.uid; // Adiciona esta linha para armazenar o ID do usuário
+      });
+    }
   }
 
   void _login(BuildContext context) async {
@@ -104,21 +106,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToCadastrarReceitas(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => RecipeForm(userId: _userId),
-    ),
-  );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecipeForm(userId: _userId),
+      ),
+    );
   }
+
   void _navigateToMinhasReceitas(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => MyRecipes(),
-    ),
-  );
-}
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyRecipes(),
+      ),
+    );
+  }
+
+  void _navigateToReceitasCurtidas(BuildContext context) {
+    if (_isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReceitasCurtidasPage(userId: _userId!), // Passa o userId ao criar a instância da página
+        ),
+      );
+    }
+  }
+
 
   void _showDialog(BuildContext context, String message) {
     showDialog(
@@ -169,57 +184,72 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoggedInBody() {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[
-      ElevatedButton(
-        onPressed: () => _navigateToPerfil(context),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.brown[400], // Cor do botão "Perfil"
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: () => _navigateToPerfil(context),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.brown[400], // Cor do botão "Perfil"
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.person),
+              SizedBox(width: 8.0),
+              Text('Perfil'),
+            ],
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.person),
-            SizedBox(width: 8.0),
-            Text('Perfil'),
-          ],
+        SizedBox(height: 20.0),
+        ElevatedButton(
+          onPressed: () => _navigateToCadastrarReceitas(context),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.brown[400], // Cor do botão "Cadastrar Receitas"
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.book),
+              SizedBox(width: 8.0),
+              Text('Cadastrar Receitas'),
+            ],
+          ),
         ),
-      ),
-      SizedBox(height: 20.0),
-      ElevatedButton(
-        onPressed: () => _navigateToCadastrarReceitas(context),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.brown[400], // Cor do botão "Cadastrar Receitas"
+        SizedBox(height: 20.0),
+        ElevatedButton(
+          onPressed: () => _navigateToMinhasReceitas(context),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.brown[400], // Cor do botão "Minhas Receitas"
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.food_bank),
+              SizedBox(width: 8.0),
+              Text('Minhas Receitas'),
+            ],
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.book),
-            SizedBox(width: 8.0),
-            Text('Cadastrar Receitas'),
-          ],
+        SizedBox(height: 20.0),
+        ElevatedButton(
+          onPressed: () => _navigateToReceitasCurtidas(context),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.brown[400], // Cor do botão "Receitas Curtidas"
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.favorite),
+              SizedBox(width: 8.0),
+              Text('Receitas Curtidas'),
+            ],
+          ),
         ),
-      ),
-      SizedBox(height: 20.0),
-      ElevatedButton(
-        onPressed: () => _navigateToMinhasReceitas(context),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.brown[400], // Cor do botão "Minhas Receitas"
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.food_bank),
-            SizedBox(width: 8.0),
-            Text('Minhas Receitas'),
-          ],
-        ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _buildLoggedOutBody() {
     return Column(
@@ -255,4 +285,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: LoginScreen(),
+    theme: ThemeData(
+      primarySwatch: Colors.brown,
+      hintColor: Colors.brown[700],
+    ),
+  ));
 }

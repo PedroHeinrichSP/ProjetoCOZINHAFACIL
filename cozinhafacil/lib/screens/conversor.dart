@@ -3,6 +3,7 @@ import 'package:cozinhafacil/utils/pallete.dart';
 
 void main() {
   runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: Conversor(),
   ));
 }

@@ -11,7 +11,7 @@ class Recipe {
   late List<String> ingredients;
   late List<String> steps;
   late String imageUrl;
-  List<String>? likes; // Lista de IDs de usuários que deram like
+  List<String>? likes;
   late int uniqueLikesCount;
 
   Recipe({
@@ -30,8 +30,9 @@ class Recipe {
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;
+  final VoidCallback onLikePressed;
 
-  RecipeCard({required this.recipe});
+  RecipeCard({required this.recipe, required this.onLikePressed});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class RecipeCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RecipeDetailsPage(recipe: recipe),
+              builder: (context) => RecipeDetailsPage(recipe: recipe, onLikePressed: onLikePressed),
             ),
           );
         },
@@ -83,9 +84,21 @@ class RecipeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.thumb_up, color: Colors.brown),
                       SizedBox(width: 5),
-                      Text(
-                        'Likes: ${recipe.uniqueLikesCount}',
-                        style: TextStyle(fontSize: 16, color: Colors.brown),
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance.collection('recipes').doc(recipe.recipeId).snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text('Likes: ${recipe.uniqueLikesCount}', style: TextStyle(fontSize: 16, color: Colors.brown));
+                          }
+
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}', style: TextStyle(fontSize: 16, color: Colors.brown));
+                          }
+
+                          var likes = snapshot.data?['likes'] ?? [];
+                          int uniqueLikesCount = likes.toSet().length;
+                          return Text('Likes: $uniqueLikesCount', style: TextStyle(fontSize: 16, color: Colors.brown));
+                        },
                       ),
                     ],
                   ),
@@ -106,8 +119,9 @@ class RecipeCard extends StatelessWidget {
 
 class RecipeDetailsPage extends StatefulWidget {
   final Recipe recipe;
+  final VoidCallback onLikePressed;
 
-  RecipeDetailsPage({required this.recipe});
+  RecipeDetailsPage({required this.recipe, required this.onLikePressed});
 
   @override
   _RecipeDetailsPageState createState() => _RecipeDetailsPageState();
@@ -119,7 +133,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   @override
   void initState() {
     super.initState();
-    // Verificar se o usuário já deu like ao iniciar a página
     final user = FirebaseAuth.instance.currentUser;
     userLiked = user != null && (widget.recipe.likes?.contains(user.uid) ?? false);
   }
@@ -128,33 +141,28 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // User is logged in, allow like
       final String userId = user.uid;
 
-      // Check if the user has already liked the recipe
       if (widget.recipe.likes?.contains(userId) ?? false) {
-        // User already liked, remove like
         await FirebaseFirestore.instance.collection('recipes').doc(widget.recipe.recipeId).update({
           'likes': FieldValue.arrayRemove([userId]),
         });
 
-        // Atualizar a aparência do botão
         setState(() {
           userLiked = false;
         });
       } else {
-        // User hasn't liked, add like
         await FirebaseFirestore.instance.collection('recipes').doc(widget.recipe.recipeId).update({
           'likes': FieldValue.arrayUnion([userId]),
         });
 
-        // Atualizar a aparência do botão
         setState(() {
           userLiked = true;
         });
       }
+
+      widget.onLikePressed();
     } else {
-      // User is not logged in, display an alert
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -182,15 +190,23 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
         title: Text('Detalhes da Receita'),
         backgroundColor: Colors.brown[200],
         actions: [
-          IconButton(
-            icon: Icon(
-              userLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
-              color: userLiked ? Colors.blue : null,
+          if (userLiked)
+            IconButton(
+              icon: Icon(
+                Icons.thumb_up,
+                color: Color.fromARGB(255, 76, 50, 8),
+              ),
+              onPressed: () {
+                _handleLike(context);
+              },
             ),
-            onPressed: () {
-              _handleLike(context);
-            },
-          ),
+          if (!userLiked)
+            IconButton(
+              icon: Icon(Icons.thumb_up_outlined),
+              onPressed: () {
+                _handleLike(context);
+              },
+            ),
         ],
       ),
       body: SingleChildScrollView(
@@ -314,20 +330,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late List<Recipe> recipes;
-  late bool loading;
 
   @override
   void initState() {
     super.initState();
-    loading = true;
+    recipes = [];
     fetchRecipes();
   }
 
   Future<void> fetchRecipes() async {
     final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('recipes').get();
-    recipes = _getRecipesFromQuery(snapshot);
     setState(() {
-      loading = false;
+      recipes = _getRecipesFromQuery(snapshot);
     });
   }
 
@@ -376,14 +390,12 @@ class _HomePageState extends State<HomePage> {
         title: Text('Receitas'),
         backgroundColor: Colors.brown[200],
         actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              fetchRecipes();
-            },
-          ),
           PopupMenuButton(
             itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text('Sem Filtro'),
+                value: 'none',
+              ),
               PopupMenuItem(
                 child: Text('Ordem alfabética'),
                 value: 'alphabetical',
@@ -394,28 +406,29 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
             onSelected: (value) {
-              if (value == 'alphabetical') {
-                setState(() {
+              setState(() {
+                if (value == 'none') {
+                  fetchRecipes();
+                } else if (value == 'alphabetical') {
                   recipes.sort((a, b) => a.title.compareTo(b.title));
-                });
-              } else if (value == 'likes') {
-                setState(() {
+                } else if (value == 'likes') {
                   recipes.sort((a, b) => b.uniqueLikesCount.compareTo(a.uniqueLikesCount));
-                });
-              }
+                }
+              });
             },
           ),
         ],
       ),
-      body: loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView(
-              children: recipes.map((Recipe recipe) {
-                return RecipeCard(recipe: recipe);
-              }).toList(),
-            ),
+      body: ListView(
+        children: recipes.map((Recipe recipe) {
+          return RecipeCard(
+            recipe: recipe,
+            onLikePressed: () {
+              fetchRecipes(); // Chamar fetchRecipes quando o botão "like" for pressionado
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 }

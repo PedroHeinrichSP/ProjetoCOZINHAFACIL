@@ -17,18 +17,14 @@ class SignUpScreen extends StatelessWidget {
         password: password,
       );
 
-      // Handle success, user is registered in Firebase Authentication.
       _showDialog(context, "Usuário registrado com sucesso. ID: ${userCredential.user!.uid}");
 
-      // Delay for 4 seconds and then navigate to login
+      // Delay for 4 seconds and then pop the current screen
       await Future.delayed(Duration(seconds: 4));
-      
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+
+      // Pop the current screen, returning to the login screen
+      Navigator.pop(context);
     } catch (error) {
-      // Handle error.
       String errorMessage = _getErrorMessage(error);
       _showDialog(context, errorMessage);
     }
@@ -85,7 +81,7 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cadastro'),
-        backgroundColor: Colors.brown[200], // Tema marrom claro
+        backgroundColor: Colors.brown[200],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -109,14 +105,14 @@ class SignUpScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.person_add), // Adicionando ícone ao botão
+                  Icon(Icons.person_add),
                   SizedBox(width: 8.0),
                   Text('Registrar'),
                 ],
               ),
               style: ElevatedButton.styleFrom(
-                primary: Colors.brown[700], // Cor marrom mais escura
-                onPrimary: Colors.white, // Texto branco
+                primary: Colors.brown[700],
+                onPrimary: Colors.white,
               ),
             ),
             SizedBox(height: 20.0),
