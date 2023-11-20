@@ -1,19 +1,14 @@
-import 'package:cozinhafacil/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'utils/pallete.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-// Telas
 import 'screens/login.dart';
 import 'screens/cadastro.dart';
 import 'screens/cadastroReceitas.dart';
-
 import 'screens/conversor.dart';
-
-// sql
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'screens/homepage.dart';
+import 'screens/sobrePage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/home': (context) => HomePage(),
         '/cadastro_receitas': (context) => RecipeForm(),
+        '/sobre': (context) => SobrePage(), // Adicionado rota para a página 'SobrePage'
       },
     );
   }
@@ -52,19 +48,19 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _pages = [
     Conversor(),
     HomePage(),
-    LoginScreen(),  // Alterado para a tela de login
+    LoginScreen(),
+    SobrePage(),
   ];
 
   void _onItemTapped(int index) {
-  if (index >= 0 && index < _pages.length) {
-    setState(() {
-      _selectedIndex = index;
+    if (index >= 0 && index < _pages.length) {
+      setState(() {
+        _selectedIndex = index;
 
-      // Adicione esta verificação para navegar à tela de login quando a terceira opção for selecionada
-      
-    });
+        
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +78,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people_alt, color: AppColors.buttonPrimaryColor),
-            label: 'Login',  // Alterado o rótulo para "Login"
+            label: 'Login', // Alterado o rótulo para "Login"
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info, color: AppColors.buttonPrimaryColor),
+            label: 'Sobre', // Adicionado rótulo para "Sobre"
           ),
         ],
         backgroundColor: AppColors.backgroundColor,

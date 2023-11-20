@@ -401,7 +401,7 @@ class _HomePageState extends State<HomePage> {
                 value: 'alphabetical',
               ),
               PopupMenuItem(
-                child: Text('Likes (maior)'),
+                child: Text('Likes'),
                 value: 'likes',
               ),
             ],
