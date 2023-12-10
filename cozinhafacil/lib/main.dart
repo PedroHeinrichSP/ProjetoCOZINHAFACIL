@@ -1,19 +1,14 @@
-// Bibliotecas
-import 'package:cozinhafacil/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'utils/pallete.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-//Telas
 import 'screens/login.dart';
 import 'screens/cadastro.dart';
-
+import 'screens/cadastroReceitas.dart';
 import 'screens/conversor.dart';
-
-//sql
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'screens/homepage.dart';
+import 'screens/sobrePage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,13 +28,15 @@ class MyApp extends StatelessWidget {
         '/cadastro': (context) => SignUpScreen(),
         '/login': (context) => LoginScreen(),
         '/home': (context) => HomePage(),
+        '/cadastro_receitas': (context) => RecipeForm(),
+        '/sobre': (context) => SobrePage(), // Adicionado rota para a página 'SobrePage'
       },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -52,13 +49,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Conversor(),
     HomePage(),
     LoginScreen(),
-    // Adicione suas outras páginas aqui
+    SobrePage(),
   ];
 
   void _onItemTapped(int index) {
     if (index >= 0 && index < _pages.length) {
       setState(() {
         _selectedIndex = index;
+
+        
       });
     }
   }
@@ -66,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _selectedIndex == 1 ? HomePage() : _pages[_selectedIndex],
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -79,15 +78,19 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people_alt, color: AppColors.buttonPrimaryColor),
-            label: 'Perfil',
+            label: 'Login', // Alterado o rótulo para "Login"
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info, color: AppColors.buttonPrimaryColor),
+            label: 'Sobre', // Adicionado rótulo para "Sobre"
           ),
         ],
         backgroundColor: AppColors.backgroundColor,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        showSelectedLabels: false, // Mostrar rótulo do item selecionado
-        showUnselectedLabels: false, // Mostrar rótulo do item não selecionado
-        type: BottomNavigationBarType.fixed, // Evitar que os itens se movam
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

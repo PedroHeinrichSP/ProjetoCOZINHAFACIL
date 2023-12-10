@@ -1,208 +1,113 @@
 import 'package:flutter/material.dart';
-import 'sobrePage.dart';
-import 'receita.dart'; // Importe o arquivo receita.dart aqui
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() => runApp(MaterialApp(
-      home: HomePage(),
-    ));
+class Recipe {
+  late String recipeId;
+  late String title;
+  late String description;
+  late String prepTime;
+  late int? servings;
+  late List<String> ingredients;
+  late List<String> steps;
+  late String imageUrl;
+  List<String>? likes;
+  late int uniqueLikesCount;
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
+  Recipe({
+    required this.recipeId,
+    required this.title,
+    required this.description,
+    required this.prepTime,
+    required this.servings,
+    required this.ingredients,
+    required this.steps,
+    required this.imageUrl,
+    this.likes,
+    required this.uniqueLikesCount,
+  });
 }
 
-class _HomePageState extends State<HomePage> {
-  // List of recipe data
-  List<RecipeItem> recipes = [
-    RecipeItem(
-      imageUrl: 'https://www.receitasnestle.com.br/sites/default/files/styles/recipe_detail_desktop/public/srh_recipes/16f8aff19e2a7db960e01ccab3901bfe.webp?itok=bKTLCjv4',
-      title: 'Lasanha à Bolonhesa',
-      description: 'Deliciosa lasanha com carne moída e molho de tomate.',
-      isFavorite: false,
-      prepTime: '1 hora',
-      ingredients: ['Massa de lasanha', 'Carne moída', 'Molho de tomate', 'Queijo'],
-      servings: '4 porções',
-      instructions: 'Cozinhe a massa de lasanha e reserve. Refogue a carne moída, adicione o molho de tomate e monte as camadas da lasanha intercalando com queijo. Leve ao forno por 30 minutos.',
-    ),
-    RecipeItem(
-      imageUrl: 'https://media.gettyimages.com/id/1332440669/pt/foto/raw-salmon-steak-in-grill-pan-salt-pepper-rosemary-olive-oil-and-garlic-on-rustic-oak-table.jpg?s=2048x2048&w=gi&k=20&c=nGEDkvr1gleG--WcyrPm61ElrUU8dfb3k8xM_YKgA6U=',
-      title: 'Salmão Grelhado',
-      description: 'Salmão grelhado com limão e ervas.',
-      isFavorite: false,
-      prepTime: '30 minutos',
-      ingredients: ['Salmão', 'Limão', 'Sal', 'Pimenta', 'Ervas'],
-      servings: '2 porções',
-      instructions: 'Tempere o salmão com sal, pimenta e ervas a gosto. Grelhe o salmão em uma frigideira com azeite por 10 minutos de cada lado. Sirva com rodelas de limão.',
-    ),
-    RecipeItem(
-      imageUrl: 'https://media.gettyimages.com/id/145632947/pt/foto/chocolate-cake.jpg?s=2048x2048&w=gi&k=20&c=40tN0JQdzVGfo6Bm_IHeV1IPb9uykHxNDLVhsJbR9es=',
-      title: 'Bolo de Chocolate',
-      description: 'Bolo de chocolate fofinho com cobertura de brigadeiro.',
-      prepTime: '1 hora e 30 minutos',
-      ingredients: ['Farinha de trigo', 'Açúcar', 'Chocolate em pó', 'Ovos', 'Leite', 'Fermento', 'Leite condensado', 'Manteiga'],
-      servings: '8 porções',
-      instructions: 'Bata os ingredientes do bolo no liquidificador e asse em forno preaquecido a 180 graus por 40 minutos. Para a cobertura, misture o leite condensado, chocolate em pó e manteiga em fogo baixo até obter o ponto de brigadeiro. Cubra o bolo com a cobertura ainda quente.',
-    ),
-    // Add more items as needed
-  ];
+class RecipeCard extends StatelessWidget {
+  final Recipe recipe;
+  final VoidCallback onLikePressed;
 
-  PageController _pageController = PageController(initialPage: 0);
+  RecipeCard({required this.recipe, required this.onLikePressed});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[Color.fromARGB(255, 41, 41, 41), Colors.transparent]),
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            color: Colors.white,
-            onPressed: () {
-              // Handle search button tap
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.info),
-            color: Colors.white,
-            onPressed: () {
-              // Handle "Sobre" button tap
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SobrePage()),
-              );
-            },
-          ),
-        ],
+    return Card(
+      elevation: 5,
+      margin: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
       ),
-      body: PageView.builder(
-        scrollDirection: Axis.vertical,
-        allowImplicitScrolling: true,
-        controller: _pageController,
-        itemCount: recipes.length,
-        itemBuilder: (context, index) {
-          final recipe = recipes[index];
-          return RecipeCard(recipe: recipe);
-        },
-        onPageChanged: (index) {
-          // Handle page change, you can add logic here if needed
-        },
-      ),
-    );
-  }
-}
-
-class RecipeCard extends StatefulWidget {
-  final RecipeItem recipe;
-
-  RecipeCard({required this.recipe});
-
-  @override
-  _RecipeCardState createState() => _RecipeCardState();
-}
-
-class _RecipeCardState extends State<RecipeCard> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DefaultCard(
-              widget.recipe.imageUrl,
-              widget.recipe.description,
-              widget.recipe.title,
-              widget.recipe.prepTime,
-              widget.recipe.ingredients,
-              widget.recipe.servings,
-              widget.recipe.instructions,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RecipeDetailsPage(recipe: recipe, onLikePressed: onLikePressed),
             ),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(widget.recipe.imageUrl),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Stack(
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(208, 59, 59, 59).withOpacity(0.7),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              child: Image.network(
+                recipe.imageUrl,
+                height: 150,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    recipe.title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown[700],
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(height: 8),
+                  Row(
                     children: [
-                      Text(
-                        widget.recipe.title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Icon(Icons.thumb_up, color: Colors.brown),
+                      SizedBox(width: 5),
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance.collection('recipes').doc(recipe.recipeId).snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text('Likes: ${recipe.uniqueLikesCount}', style: TextStyle(fontSize: 16, color: Colors.brown));
+                          }
+
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}', style: TextStyle(fontSize: 16, color: Colors.brown));
+                          }
+
+                          var likes = snapshot.data?['likes'] ?? [];
+                          int uniqueLikesCount = likes.toSet().length;
+                          return Text('Likes: $uniqueLikesCount', style: TextStyle(fontSize: 16, color: Colors.brown));
+                        },
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        widget.recipe.description,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 8),
                     ],
                   ),
-                ),
-              ],
-            ),
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    widget.recipe.isFavorite = !widget.recipe.isFavorite;
-                  });
-                },
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        widget.recipe.isFavorite ? Colors.red : Colors.white,
+                  SizedBox(height: 8),
+                  Text(
+                    recipe.description,
+                    style: TextStyle(fontSize: 16, color: Colors.brown[500]),
                   ),
-                  child: Icon(
-                    widget.recipe.isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color:
-                        widget.recipe.isFavorite ? Colors.white : Colors.red,
-                    size: 32,
-                  ),
-                ),
+                ],
               ),
             ),
           ],
@@ -212,24 +117,328 @@ class _RecipeCardState extends State<RecipeCard> {
   }
 }
 
-class RecipeItem {
-  final String imageUrl;
-  final String title;
-  final String description;
-  bool isFavorite;
-  final String prepTime;
-  final List<String> ingredients;
-  final String servings;
-  final String instructions;
+class RecipeDetailsPage extends StatefulWidget {
+  final Recipe recipe;
+  final VoidCallback onLikePressed;
 
-  RecipeItem({
-    required this.imageUrl,
-    required this.title,
-    required this.description,
-    required this.prepTime,
-    required this.ingredients,
-    required this.servings,
-    required this.instructions,
-    this.isFavorite = false,
-  });
+  RecipeDetailsPage({required this.recipe, required this.onLikePressed});
+
+  @override
+  _RecipeDetailsPageState createState() => _RecipeDetailsPageState();
+}
+
+class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
+  late bool userLiked;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    userLiked = user != null && (widget.recipe.likes?.contains(user.uid) ?? false);
+  }
+
+  Future<void> _handleLike(BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final String userId = user.uid;
+
+      if (widget.recipe.likes?.contains(userId) ?? false) {
+        await FirebaseFirestore.instance.collection('recipes').doc(widget.recipe.recipeId).update({
+          'likes': FieldValue.arrayRemove([userId]),
+        });
+
+        setState(() {
+          userLiked = false;
+        });
+      } else {
+        await FirebaseFirestore.instance.collection('recipes').doc(widget.recipe.recipeId).update({
+          'likes': FieldValue.arrayUnion([userId]),
+        });
+
+        setState(() {
+          userLiked = true;
+        });
+      }
+
+      widget.onLikePressed();
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Você deve estar logado'),
+            content: Text('Para curtir a receita, você precisa estar logado.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detalhes da Receita'),
+        backgroundColor: Colors.brown[200],
+        actions: [
+          if (userLiked)
+            IconButton(
+              icon: Icon(
+                Icons.thumb_up,
+                color: Color.fromARGB(255, 76, 50, 8),
+              ),
+              onPressed: () {
+                _handleLike(context);
+              },
+            ),
+          if (!userLiked)
+            IconButton(
+              icon: Icon(Icons.thumb_up_outlined),
+              onPressed: () {
+                _handleLike(context);
+              },
+            ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 250,
+              width: MediaQuery.of(context).size.width,
+              child: Image.network(
+                widget.recipe.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Icon(Icons.access_time, color: Colors.brown[700]),
+                    SizedBox(height: 5),
+                    Text(
+                      'Preparo: ${widget.recipe.prepTime}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 20),
+                Column(
+                  children: [
+                    Icon(Icons.local_dining, color: Colors.brown[700]),
+                    SizedBox(height: 5),
+                    Text(
+                      'Porções: ${widget.recipe.servings}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Text(
+                widget.recipe.title,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown[700],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Text(
+                widget.recipe.description,
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              ),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ingredientes:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown[700],
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  for (var ingredient in widget.recipe.ingredients)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Icon(Icons.check, color: Colors.brown[700], size: 16),
+                          SizedBox(width: 10),
+                          Text(ingredient, style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Modo de Preparo:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown[700],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                widget.recipe.steps.join('\n'),
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late List<Recipe> recipes;
+
+  @override
+  void initState() {
+    super.initState();
+    recipes = [];
+    fetchRecipes();
+  }
+
+  Future<void> fetchRecipes() async {
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('recipes').get();
+    setState(() {
+      recipes = _getRecipesFromQuery(snapshot);
+    });
+  }
+
+  List<Recipe> _getRecipesFromQuery(QuerySnapshot snapshot) {
+    return snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic>? data =
+          document.data() as Map<String, dynamic>?;
+
+      if (data == null) {
+        return Recipe(
+          recipeId: '',
+          title: '',
+          description: '',
+          prepTime: '',
+          servings: 0,
+          ingredients: [],
+          steps: [],
+          imageUrl: '',
+          likes: [],
+          uniqueLikesCount: 0,
+        );
+      }
+
+      List<String> likes = List<String>.from(data['likes'] ?? []);
+      int uniqueLikesCount = likes.toSet().length;
+
+      return Recipe(
+        recipeId: document.id,
+        title: data['title'] ?? '',
+        description: data['description'] ?? '',
+        prepTime: data['prepTime'] ?? '',
+        servings: data['servings'] ?? 0,
+        ingredients: List<String>.from(data['ingredients'] ?? []),
+        steps: List<String>.from(data['steps'] ?? []),
+        imageUrl: data['imageUrl'] ?? '',
+        likes: likes,
+        uniqueLikesCount: uniqueLikesCount,
+      );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Receitas'),
+        backgroundColor: Colors.brown[200],
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text('Sem Filtro'),
+                value: 'none',
+              ),
+              PopupMenuItem(
+                child: Text('Ordem alfabética'),
+                value: 'alphabetical',
+              ),
+              PopupMenuItem(
+                child: Text('Likes'),
+                value: 'likes',
+              ),
+            ],
+            onSelected: (value) {
+              setState(() {
+                if (value == 'none') {
+                  fetchRecipes();
+                } else if (value == 'alphabetical') {
+                  recipes.sort((a, b) => a.title.compareTo(b.title));
+                } else if (value == 'likes') {
+                  recipes.sort((a, b) => b.uniqueLikesCount.compareTo(a.uniqueLikesCount));
+                }
+              });
+            },
+          ),
+        ],
+      ),
+      body: ListView(
+        children: recipes.map((Recipe recipe) {
+          return RecipeCard(
+            recipe: recipe,
+            onLikePressed: () {
+              fetchRecipes(); // Chamar fetchRecipes quando o botão "like" for pressionado
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: HomePage(),
+    theme: ThemeData(
+      primarySwatch: Colors.brown,
+      hintColor: Colors.brown[700],
+    ),
+  ));
 }

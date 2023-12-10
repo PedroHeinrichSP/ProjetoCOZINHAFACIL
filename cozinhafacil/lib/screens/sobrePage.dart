@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:cozinhafacil/utils/pallete.dart';
-class SobrePage extends StatelessWidget {
+
+class SobrePage extends StatefulWidget {
+  @override
+  SobrePageState createState() => SobrePageState();
+}
+
+class SobrePageState extends State<SobrePage> {
   @override
   Widget build(BuildContext context) {
+    // Constants
+    const double imageSize = 350.0;
+    const double verticalSpacing = 20.0;
+
     return Scaffold(
-     appBar: AppBar(
-         backgroundColor: AppColors.primaryColor,
-          iconTheme: IconThemeData(
-          color: AppColors.textColor, // Define a cor do ícone (seta de voltar)
+      appBar: AppBar(
+        backgroundColor: Colors.brown[200], // Cor marrom claro
+        iconTheme: const IconThemeData(
+          color: AppColors.textColor,
         ),
         title: const Text(
           'Sobre',
           style: TextStyle(
-            color: AppColors.textColor, // Define a cor do texto da AppBar como preto
+            color: Color.fromARGB(255, 255, 255, 255),
           ),
         ),
-     ),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -24,28 +34,28 @@ class SobrePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'assets/images/puc_minas_logo.png', // Caminho para a imagem do logotipo da PUC Minas
-                width: 350, // Largura da imagem
-                height: 350, // Altura da imagem
+                'assets/images/puc_minas_logo.png',
+                width: imageSize,
+                height: imageSize,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: verticalSpacing),
               Text(
                 'Cozinha Fácil',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: verticalSpacing),
               Text(
                 'Este é um aplicativo de culinária fácil que ajuda você a encontrar e compartilhar receitas deliciosas.',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: verticalSpacing),
               Text(
                 'Versão: 1.0.0',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),
